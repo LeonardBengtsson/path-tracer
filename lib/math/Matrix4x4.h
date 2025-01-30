@@ -5,9 +5,12 @@
 #ifndef MATRIX4X4_H
 #define MATRIX4X4_H
 #include "Matrix3x3.h"
+#include "Ray.h"
 
 
 class Matrix4x4 {
+private:
+    Vec3 apply_only_rot(const Vec3& v) const;
 public:
     static const Matrix4x4 IDENT;
 
@@ -23,8 +26,10 @@ public:
     Matrix4x4 operator*(const Matrix4x4&) const;
 
     Vec3 apply(const Vec3&) const;
+    Ray apply(const Ray&) const;
     Matrix4x4 T() const;
-    double det() const;
+
+    std::string to_string() const;
 };
 
 

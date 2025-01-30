@@ -6,14 +6,23 @@
 #include <cmath>
 
 const Vec3 Vec3::ZERO = {0, 0, 0};
+const Vec3 Vec3::ONE = {1, 1, 1};
 const Vec3 Vec3::X = {1, 0, 0};
 const Vec3 Vec3::Y = {0, 1, 0};
 const Vec3 Vec3::Z = {0, 0, 1};
 
+Vec3::Vec3(const Vec3 &v) : x(v.x), y(v.y), z(v.z) {}
 Vec3::Vec3(const double x, const double y, const double z) : x(x), y(y), z(z) {}
+Vec3::Vec3(const Vec2 xy, const double z) : x(xy.x), y(xy.y), z(z) {}
+Vec3::Vec3(const double x, const Vec2 yz) : x(x), y(yz.x), z(yz.y) {}
+Vec3::Vec3(const double xyz) : x(xyz), y(xyz), z(xyz) {}
 
 Vec3 Vec3::operator+(const Vec3 &v) const {
     return {x + v.x, y + v.y, z + v.z};
+}
+
+Vec3 Vec3::operator+(const double w) const {
+    return {x + w, y + w, z + w};
 }
 
 Vec3 Vec3::operator-() const {
@@ -23,6 +32,10 @@ Vec3 Vec3::operator-() const {
 
 Vec3 Vec3::operator-(const Vec3 &v) const {
     return {x - v.x, y - v.y, z - v.z};
+}
+
+Vec3 Vec3::operator-(const double w) const {
+    return {x - w, y - w, z - w};
 }
 
 Vec3 Vec3::operator*(const double d) const {

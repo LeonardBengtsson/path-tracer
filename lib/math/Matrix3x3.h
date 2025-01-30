@@ -4,6 +4,8 @@
 
 #ifndef MATRIX3X3_H
 #define MATRIX3X3_H
+#include <string>
+
 #include "Vec3.h"
 
 
@@ -25,6 +27,10 @@ public:
 
     Matrix3x3 T() const;
     double det() const;
+
+    std::string to_string() const;
+
+    static Matrix3x3 from_forward_down_vecs(const Vec3&, const Vec3&);
 };
 
 

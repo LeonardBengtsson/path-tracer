@@ -4,23 +4,26 @@
 
 #ifndef VEC3_H
 #define VEC3_H
-
+#include "Vec2.h"
 
 
 class Vec3 {
 public:
-    static const Vec3 ZERO;
-    static const Vec3 X;
-    static const Vec3 Y;
-    static const Vec3 Z;
+    static const Vec3 ZERO, ONE, X, Y, Z;
 
-    const double x, y, z;
+    double x, y, z;
 
+    Vec3(const Vec3&);
     Vec3(double, double, double);
+    Vec3(Vec2, double);
+    Vec3(double, Vec2);
+    Vec3(double);
 
     Vec3 operator+(const Vec3&) const;
+    Vec3 operator+(double) const;
     Vec3 operator-() const;
     Vec3 operator-(const Vec3&) const;
+    Vec3 operator-(double) const;
     Vec3 operator*(double) const;
     Vec3 operator/(double) const;
     double operator*(const Vec3&) const;

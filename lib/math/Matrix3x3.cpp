@@ -4,6 +4,8 @@
 
 #include "Matrix3x3.h"
 
+#include <format>
+
 const Matrix3x3 Matrix3x3::IDENT = {1, 0, 0, 0, 1, 0, 0, 0, 1};
 
 Matrix3x3::Matrix3x3(
@@ -84,4 +86,18 @@ Matrix3x3 Matrix3x3::T() const {
 double Matrix3x3::det() const {
     return e11 * e22 * e33 + e12 * e23 * e31 + e13 * e21 * e32
          - e11 * e23 * e32 - e12 * e21 * e33 - e13 * e22 * e31;
+}
+
+std::string Matrix3x3::to_string() const {
+    return std::format(
+        "[{:12.4f} {:12.4f} {:12.4f}]\n[{:12.4f} {:12.4f} {:12.4f}]\n[{:12.4f} {:12.4f} {:12.4f}]",
+        e11, e12, e13,
+        e21, e22, e23,
+        e31, e32, e33
+    );
+}
+
+Matrix3x3 Matrix3x3::from_forward_down_vecs(const Vec3 &forward, const Vec3 &down) {
+    const Vec3 right = Vec3::cross(down, forward).norm();
+    return {right, Vec3::cross(forward, right), forward};
 }

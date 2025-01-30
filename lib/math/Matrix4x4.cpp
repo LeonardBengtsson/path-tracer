@@ -4,6 +4,8 @@
 
 #include "Matrix4x4.h"
 
+#include <format>
+
 const Matrix4x4 Matrix4x4::IDENT = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
 
 Matrix4x4::Matrix4x4(
@@ -79,11 +81,26 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &m) const {
     };
 }
 
+Vec3 Matrix4x4::apply_only_rot(const Vec3 &v) const {
+    return {
+        e11 * v.x + e12 * v.y + e13 * v.z,
+        e21 * v.x + e22 * v.y + e23 * v.z,
+        e31 * v.x + e32 * v.y + e33 * v.z,
+    };
+}
+
 Vec3 Matrix4x4::apply(const Vec3 &v) const {
     return {
         e11 * v.x + e12 * v.y + e13 * v.z + e14,
-        e21 * v.x + e22 * v.y + e23 * v.z + e14,
-        e31 * v.x + e32 * v.y + e33 * v.z + e14,
+        e21 * v.x + e22 * v.y + e23 * v.z + e24,
+        e31 * v.x + e32 * v.y + e33 * v.z + e34,
+    };
+}
+
+Ray Matrix4x4::apply(const Ray &r) const {
+    return {
+        apply(r.from),
+        apply_only_rot(r.dir)
     };
 }
 
@@ -94,4 +111,14 @@ Matrix4x4 Matrix4x4::T() const {
         e13, e23, e33, e43,
         e14, e24, e34, e44,
     };
+}
+
+std::string Matrix4x4::to_string() const {
+    return std::format(
+        "[{:12.4f} {:12.4f} {:12.4f} {:12.4f}]\n[{:12.4f} {:12.4f} {:12.4f} {:12.4f}]\n[{:12.4f} {:12.4f} {:12.4f} {:12.4f}]\n[{:12.4f} {:12.4f} {:12.4f} {:12.4f}]",
+        e11, e12, e13, e14,
+        e21, e22, e23, e24,
+        e31, e32, e33, e34,
+        e41, e42, e43, e44
+    );
 }

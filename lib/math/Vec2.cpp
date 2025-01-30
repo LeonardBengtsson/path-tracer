@@ -6,22 +6,32 @@
 #include <cmath>
 
 const Vec2 Vec2::ZERO = {0, 0};
+const Vec2 Vec2::ONE = {1,  1};
 const Vec2 Vec2::X = {1, 0};
 const Vec2 Vec2::Y = {0, 1};
 
 Vec2::Vec2(const double x, const double y) : x(x), y(y) {}
 
-Vec2 Vec2::operator+(const Vec2 &v) const {
+Vec2::Vec2(const double xy) : x(xy), y(xy) {}
+
+Vec2 Vec2::operator+(const Vec2 v) const {
     return {x + v.x, y + v.y};
+}
+
+Vec2 Vec2::operator+(const double w) const {
+    return {x + w, y + w};
 }
 
 Vec2 Vec2::operator-() const {
     return {-x, -y};
 }
 
-
-Vec2 Vec2::operator-(const Vec2 &v) const {
+Vec2 Vec2::operator-(const Vec2 v) const {
     return {x - v.x, y - v.y};
+}
+
+Vec2 Vec2::operator-(const double w) const {
+    return {x - w, y - w};
 }
 
 Vec2 Vec2::operator*(const double d) const {
@@ -32,7 +42,7 @@ Vec2 Vec2::operator/(const double d) const {
     return {x / d, y / d};
 }
 
-double Vec2::operator*(const Vec2 &v) const {
+double Vec2::operator*(const Vec2 v) const {
     return x * v.x + y * v.y;
 }
 

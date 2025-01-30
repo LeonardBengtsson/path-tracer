@@ -19,4 +19,8 @@ add_executable(path_tracer_2025
         lib/math/math_util.h
         lib/math/Matrix4x4.cpp
         lib/math/Matrix4x4.h
+        lib/math/Box.cpp
+        lib/math/Box.h
+        lib/render/color_util.cpp
+        lib/render/color_util.h
 )

@@ -9,20 +9,21 @@
 
 class Vec2 {
 public:
-    static const Vec2 ZERO;
-    static const Vec2 X;
-    static const Vec2 Y;
+    static const Vec2 ZERO, ONE, X, Y;
 
-    const double x, y;
+    double x, y;
 
     Vec2(double, double);
+    Vec2(double);
 
-    Vec2 operator+(const Vec2&) const;
+    Vec2 operator+(Vec2) const;
+    Vec2 operator+(double) const;
     Vec2 operator-() const;
-    Vec2 operator-(const Vec2&) const;
+    Vec2 operator-(Vec2) const;
+    Vec2 operator-(double) const;
     Vec2 operator*(double) const;
     Vec2 operator/(double) const;
-    double operator*(const Vec2&) const;
+    double operator*(Vec2) const;
 
     double sq() const;
     double magn() const;
