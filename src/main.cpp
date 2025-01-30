@@ -4,90 +4,101 @@
 
 #include <cmath>
 #include <cstdint>
+#include <format>
+#include <filesystem>
 #include <iostream>
-#include <fstream>
+
 #include "stb_image_write.h"
+#include "../lib/render/color_util.h"
+#include "../lib/scene/Scene.h"
+#include "../lib/scene/SphereObject.h"
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define OUTPUT_HEIGHT 2160
+#define ASPECT_RATIO 16 / 9
+#define OUTPUT_WIDTH (OUTPUT_HEIGHT * ASPECT_RATIO)
 
-typedef uint32_t Rgba;
-
-void fill_buffer(Rgba *rgb, const uint32_t size_x, const uint32_t size_y, Rgba(*frag_shader)(double, double)) {
-    uint32_t index = 0;
-    for (uint32_t j = 0; j < size_y; j++) {
-        const double y = static_cast<double>(j) / size_y;
-        for (uint32_t i = 0; i < size_x; i++) {
-            const double x = static_cast<double>(i) / size_x;
-            rgb[index] = frag_shader(x, y);
-            index++;
-        }
-    }
-}
-
-void unpack_argb(const Rgba rgb, uint8_t out[4]) {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    out[0] = static_cast<uint8_t>(rgb & 0xff);
-    out[1] = static_cast<uint8_t>((rgb >> 8) & 0xff);
-    out[2] = static_cast<uint8_t>((rgb >> 16) & 0xff);
-    out[3] = static_cast<uint8_t>((rgb >> 24) & 0xff);
-#else
-    out[0] = static_cast<uint8_t>((rgb >> 24) & 0xff);
-    out[1] = static_cast<uint8_t>((rgb >> 16) & 0xff);
-    out[2] = static_cast<uint8_t>((rgb >> 8) & 0xff);
-    out[3] = static_cast<uint8_t>(rgb & 0xff);
-#endif
-}
-
-Rgba pack_rgba(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a) {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    return r | (g << 8) | (b << 16) | (a << 24);
-#else
-    return (r << 24) | (g << 16) | (b << 8) | a;
-#endif
-}
-
-Rgba pack_rgba_d(const double r, const double g, const double b, const double a) {
-    return pack_rgba(
-        static_cast<uint8_t>(255 * r),
-        static_cast<uint8_t>(255 * g),
-        static_cast<uint8_t>(255 * b),
-        static_cast<uint8_t>(255 * a)
-    );
-}
-
-void write_ppm(const char *path, const Rgba *pixels, const uint32_t size_x, const uint32_t size_y) {
-    std::ofstream out;
-    std::remove(path);
-    out.open(path);
-    out << "P3\n" + std::to_string(size_x) + " " + std::to_string(size_y) + "\n255\n";
-
-    uint32_t index = 0;
-    for (uint32_t j = 0; j < size_y; j++) {
-        for (uint32_t i = 0; i < size_x; i++) {
-            uint8_t rgb[4];
-            unpack_argb(pixels[index], rgb);
-            out << std::to_string(rgb[1]) + " " + std::to_string(rgb[2]) + " " + std::to_string(rgb[3]) + " ";
-            index++;
-        }
-        out << "\n";
-    }
-    out.close();
-}
+#define DEBUG
+#define DEPTH_LIMIT 200
 
 int main() {
-    Rgba *buffer = new Rgba[WIDTH * HEIGHT];
-    fill_buffer(buffer, WIDTH, HEIGHT, [](const double u, const double v) -> Rgba {
-        double y = std::fmod(100 * u, 1) < 0.5 ^ std::fmod(100 * v, 1) < 0.5 ? 1 : 0;
-        return pack_rgba_d(y, y, y, 1);
-    });
+    auto *buffer = new color_util::Rgba[OUTPUT_WIDTH * OUTPUT_HEIGHT];
 
-    const char *OUTPUT = "out.png";
+    const auto cyan_material = Material(0, .5, LightSpectrum::from_rgb(0, 1, 1, 1));
+    const auto magenta_material = Material(0, .5, LightSpectrum::from_rgb(1, 0, 1, 1));
+    const auto yellow_material = Material(0, .5, LightSpectrum::from_rgb(1, 1, 0, 1));
 
-    std::remove(OUTPUT);
-    stbi_write_png(OUTPUT, WIDTH, HEIGHT, 4, buffer, 0);
+    const auto white_emissive_material = Material(0, 0, LightSpectrum::from_rgb(1, 1, 1, 1));
+    const auto transparent_reflective_material = Material(.5, .5, LightSpectrum());
 
-    delete buffer;
+    auto scene = Scene(LightSpectrum::from_rgb(0, 0, 0, 1));
+
+    constexpr int M = 3;
+    for (int i = -M; i <= M; i++) {
+        for (int j = -M; j <= M; j++) {
+            for (int k = -M; k <= M; k++) {
+                const int mat = rand() % 3;
+                const Material *material;
+                if ((i + j + k) % 2 == 0) {
+                    material = &transparent_reflective_material;
+                } else if (mat == 0) {
+                    material = &cyan_material;
+                } else if (mat == 1) {
+                    material = &magenta_material;
+                } else {
+                    material = &yellow_material;
+                }
+                scene.add_object(new SphereObject(Vec3(i, j, k), .35, material));
+            }
+        }
+    }
+
+    scene.add_object(new SphereObject(Vec3(0, 1000100, 0), 1000000, &white_emissive_material));
+
+    auto projective_matrix = Matrix4x4(
+        Matrix3x3::from_forward_down_vecs(
+            Vec3(1, 2, 3).norm(),
+            Vec3::Y
+        ),
+        Vec3(-4, -8, -12)
+    );
+
+    auto ray_stack = RayStack(projective_matrix);
+    const Vec2 fov = {0.35 * std::numbers::pi, 0.35 * std::numbers::pi * OUTPUT_HEIGHT / OUTPUT_WIDTH};
+
+    uint32_t index = 0;
+    for (uint32_t j = 0; j < OUTPUT_HEIGHT; j++) {
+        const double v = static_cast<double>(j) / OUTPUT_HEIGHT;
+        for (uint32_t i = 0; i < OUTPUT_WIDTH; i++) {
+            const double u = static_cast<double>(i) / OUTPUT_WIDTH;
+
+            ray_stack.start(fov, {u, v});
+            LightSpectrum light = ray_stack.trace(scene);
+
+            double rgb[3];
+            light.to_rgb(rgb);
+            buffer[index] = color_util::pack_rgb_d(rgb);
+
+            ray_stack.clear();
+            index++;
+        }
+    }
+
+    const auto directory_name = std::string("../out/");
+    const auto file_name = directory_name + std::string("out");
+    const auto file_extension = std::string(".png");
+    int counter = 0;
+    std::string complete_file_name = file_name + file_extension;
+
+    std::filesystem::create_directory(directory_name);
+    while (std::filesystem::exists(complete_file_name)) {
+        complete_file_name = std::format("{}-{}{}", file_name, counter, file_extension);
+        counter++;
+    }
+    stbi_write_png(complete_file_name.c_str(), OUTPUT_WIDTH, OUTPUT_HEIGHT, 4, buffer, 0);
+
+    delete[] buffer;
+
+    std::cout << "Output file to: " << complete_file_name;
 
     return 0;
 }
