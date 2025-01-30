@@ -19,8 +19,24 @@ add_executable(path_tracer_2025
         lib/math/math_util.h
         lib/math/Matrix4x4.cpp
         lib/math/Matrix4x4.h
+        lib/material/Material.cpp
+        lib/material/Material.h
+        lib/scene/Scene.cpp
+        lib/scene/Scene.h
+        lib/render/LightSpectrum.cpp
+        lib/render/LightSpectrum.h
+        lib/path_tracing/RayStack.cpp
+        lib/path_tracing/RayStack.h
+        lib/scene/SceneObject.cpp
+        lib/scene/SceneObject.h
         lib/math/Box.cpp
         lib/math/Box.h
         lib/render/color_util.cpp
         lib/render/color_util.h
+        lib/render/render.cpp
+        lib/render/render.h
+        lib/path_tracing/LightTransformation.cpp
+        lib/path_tracing/LightTransformation.h
+        lib/scene/SphereObject.cpp
+        lib/scene/SphereObject.h
 )
