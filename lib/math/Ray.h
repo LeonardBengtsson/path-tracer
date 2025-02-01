@@ -13,7 +13,7 @@ class Ray {
 public:
     static const Ray ZERO, X, Y, Z;
 
-    const Vec3 from, dir;
+    Vec3 from, dir;
 
     Ray(const Vec3&, const Vec3&);
 

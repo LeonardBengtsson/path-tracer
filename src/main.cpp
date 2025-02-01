@@ -18,35 +18,20 @@
 #define DEPTH_LIMIT 20
 
 int main() {
-    const auto cyan_material = Material(0, .5, LightSpectrum::from_rgb(0, 1, 1, 1));
-    const auto magenta_material = Material(0, .5, LightSpectrum::from_rgb(1, 0, 1, 1));
-    const auto yellow_material = Material(0, .5, LightSpectrum::from_rgb(1, 1, 0, 1));
+    const auto white_emissive_material = Material(0, 0, 1, LightSpectrum::from_rgb(1, 1, 1, 1));
 
-    const auto transparent_reflective_material = Material(.5, .5, LightSpectrum());
+    const auto cyan_material = Material(.5, 0, 1, LightSpectrum::from_rgb(0, 1, 1, 1));
+    const auto magenta_material = Material(.5, 0, 1, LightSpectrum::from_rgb(1, 0, 1, 1));
+
+    const auto transparent_reflective_material = Material(.5, .4, 1.2, LightSpectrum::from_rgb(1, 1, 1, 1));
 
     auto scene = Scene(LightSpectrum());
 
-    constexpr int M = 2;
-    for (int i = -M; i <= M; i++) {
-        for (int j = -M; j <= M; j++) {
-            for (int k = -M; k <= M; k++) {
-                const int mat = rand() % 3;
-                const Material *material;
-                if ((i + j + k) % 2 == 0) {
-                    material = &transparent_reflective_material;
-                } else if (mat == 0) {
-                    material = &cyan_material;
-                } else if (mat == 1) {
-                    material = &magenta_material;
-                } else {
-                    material = &yellow_material;
-                }
-                scene.add_object(new SphereObject(Vec3(i, j, k), .35, material));
-            }
-        }
-    }
-
-    auto projective_matrix = Matrix4x4(
+    scene.add_object(new SphereObject(Vec3(0, 1000020, 0), 1000000, &white_emissive_material));
+    scene.add_object(new SphereObject(Vec3(-5, 0, 0), 4, &magenta_material));
+    scene.add_object(new SphereObject(Vec3(5, 0, 0), 4, &cyan_material));
+    scene.add_object(new SphereObject(Vec3(-2, -3, -7), 1.5, &transparent_reflective_material));
+    const auto projective_matrix = Matrix4x4(
         Matrix3x3::from_forward_down_vecs(
             Vec3(1, 2, 3).norm(),
             Vec3::Y

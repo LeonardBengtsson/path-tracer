@@ -13,12 +13,13 @@ class SceneObject;
 
 class Material {
 private:
-    const double transparency;
     const double reflectivity;
+    const double transparency;
+    const double refractive_index;
     const LightSpectrum emittance;
 
 public:
-    Material(double, double, const LightSpectrum&);
+    Material(double reflectivity, double transparency, double refractive_index, const LightSpectrum &emittance);
 
     LightSpectrum eval_path(const SceneObject*, RayStack*, const Ray&, const Vec3&) const;
 };
