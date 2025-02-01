@@ -39,4 +39,6 @@ add_executable(path_tracer_2025
         lib/scene/SphereObject.h
         lib/render/RenderBuffer.cpp
         lib/render/RenderBuffer.h
+        src/scenes.h
+        src/scenes.cpp
 )
