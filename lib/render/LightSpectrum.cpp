@@ -43,7 +43,9 @@ double LightSpectrum::inv_gamma(const double v) {
     constexpr double A = 12.92;
     constexpr double C = 0.055;
     constexpr double Gamma = 2.4;
-    if (v <= V) {
+    if (v > 1) {
+        return 1;
+    } else if (v <= V) {
         return A * v;
     } else {
         return (1 + C) * std::pow(v, 1 / Gamma) - C;

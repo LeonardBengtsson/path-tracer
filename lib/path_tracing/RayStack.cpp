@@ -24,8 +24,9 @@ RayStack::RayStack(const Matrix4x4 &projection_matrix)
     current_distance(0),
     current_transformation(LightTransformation::IDENTITY){}
 
-void RayStack::start(const Vec2 fov, const Vec2 uv) {
-    const Vec2 corner = {std::tan(fov.x * .5), std::tan(fov.y * .5)};
+void RayStack::start(const double v_fov, const double aspect_ratio, const Vec2 uv) {
+    const double corner_y = std::tan(v_fov * .5);
+    const Vec2 corner = {aspect_ratio * corner_y, corner_y};
     const Vec3 dir = {math_util::lerp(uv, -corner, corner), 1};
     solid_angle = 1 / dir.sq();
     stack.emplace_back(projection_matrix.apply(Ray(Vec3::ZERO, dir.norm())), 0, 0, LightTransformation::IDENTITY);
@@ -51,13 +52,13 @@ LightSpectrum RayStack::trace(const Scene &scene) {
 
         scene.ray_cast(node.ray, distance_traveled, hit_position, hit_normal_unnormalized, hit_object);
         if (hit_object == nullptr) {
-            result.add_modified(scene.ambient_light, node.light_transformation, node.get_factor());
+            result.add_modified(scene.ambient_light, node.light_transformation);
             stack.pop_back();
             continue;
         }
 
         if (node.depth == DEPTH_LIMIT) {
-            result.add_modified(scene.ambient_light, node.light_transformation, node.get_factor());
+            result.add_modified(scene.ambient_light, node.light_transformation);
             stack.pop_back();
             continue;
         }
@@ -68,16 +69,11 @@ LightSpectrum RayStack::trace(const Scene &scene) {
         current_transformation = node.light_transformation;
 
         stack.pop_back();
-        const LightSpectrum emitted = hit_object->push_rays(this, incident_ray, hit_normal_unnormalized.norm());
+        const LightSpectrum emitted = hit_object->eval_path(this, incident_ray, hit_normal_unnormalized.norm());
         result.add_modified(emitted, current_transformation);
     }
-    result.scale(solid_angle);
     return result;
 }
 
 RayStack::Node::Node(Ray ray, const int depth, const double distance, const LightTransformation &light_modifier)
   : ray(std::move(ray)), depth(depth), distance(distance), light_transformation(light_modifier) {}
-
-inline double RayStack::Node::get_factor() const {
-    return 1 / (distance * distance);
-}

@@ -11,7 +11,7 @@ namespace color_util {
 
     void unpack_rgba(Rgba, uint8_t[4]);
 
-    Rgba pack_rgba(uint8_t, uint8_t, uint8_t, uint8_t);
+    Rgba pack_rgba_i(uint8_t, uint8_t, uint8_t, uint8_t);
 
     Rgba pack_rgba_d(double, double, double, double);
 

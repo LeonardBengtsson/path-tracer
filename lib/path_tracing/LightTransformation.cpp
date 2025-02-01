@@ -12,6 +12,6 @@ LightTransformation LightTransformation::combine(const LightTransformation &othe
     return LightTransformation(intensity_factor * other.intensity_factor);
 }
 
-LightTransformation LightTransformation::scale(const double factor) {
+LightTransformation LightTransformation::of_factor(const double factor) {
     return LightTransformation(factor);
 }

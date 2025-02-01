@@ -15,12 +15,12 @@ class Material {
 private:
     const double transparency;
     const double reflectivity;
-    const LightSpectrum emissivity;
+    const LightSpectrum emittance;
 
 public:
     Material(double, double, const LightSpectrum&);
 
-    LightSpectrum push_rays(const SceneObject*, RayStack*, const Ray&, const Vec3&) const;
+    LightSpectrum eval_path(const SceneObject*, RayStack*, const Ray&, const Vec3&) const;
 };
 
 

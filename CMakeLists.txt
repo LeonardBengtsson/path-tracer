@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(path_tracer_2025
         src/main.cpp
-        src/stb_image_write.h
-        src/stb_image_write.cpp
+        lib/stb_image_write.h
+        lib/stb_image_write.cpp
         lib/math/Vec3.cpp
         lib/math/Vec3.h
         lib/math/Vec2.cpp
@@ -33,10 +33,10 @@ add_executable(path_tracer_2025
         lib/math/Box.h
         lib/render/color_util.cpp
         lib/render/color_util.h
-        lib/render/render.cpp
-        lib/render/render.h
         lib/path_tracing/LightTransformation.cpp
         lib/path_tracing/LightTransformation.h
         lib/scene/SphereObject.cpp
         lib/scene/SphereObject.h
+        lib/render/RenderBuffer.cpp
+        lib/render/RenderBuffer.h
 )

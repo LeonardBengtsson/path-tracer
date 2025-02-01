@@ -5,7 +5,7 @@
 #include "color_util.h"
 
 namespace color_util {
-    void unpack_argb(const Rgba rgb, uint8_t out[4]) {
+    void unpack_rgba(const Rgba rgb, uint8_t out[4]) {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
         out[0] = static_cast<uint8_t>(rgb & 0xff);
         out[1] = static_cast<uint8_t>((rgb >> 8) & 0xff);

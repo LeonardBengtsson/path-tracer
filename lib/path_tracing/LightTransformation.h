@@ -18,7 +18,7 @@ public:
 
     LightTransformation combine(const LightTransformation&) const;
 
-    static LightTransformation scale(double);
+    static LightTransformation of_factor(double);
 };
 
 

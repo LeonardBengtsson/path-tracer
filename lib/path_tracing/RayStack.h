@@ -25,8 +25,6 @@ private:
         const LightTransformation light_transformation;
 
         Node(Ray, int, double, const LightTransformation&);
-
-        double get_factor() const;
     };
 
     const Matrix4x4 projection_matrix;
@@ -41,7 +39,7 @@ private:
 public:
     explicit RayStack(const Matrix4x4& = Matrix4x4::IDENT);
 
-    void start(Vec2, Vec2);
+    void start(double, double, Vec2);
     void push(const Ray&, const LightTransformation&, double = 0);
     void clear();
     LightSpectrum trace(const Scene&);

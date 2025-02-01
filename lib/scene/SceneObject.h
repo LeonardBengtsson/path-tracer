@@ -18,7 +18,7 @@ public:
 
     SceneObject(Box, const Material*);
 
-    LightSpectrum push_rays(RayStack*, const Ray&, const Vec3&) const;
+    LightSpectrum eval_path(RayStack*, const Ray&, const Vec3&) const;
 
     virtual ~SceneObject() = default;
 
