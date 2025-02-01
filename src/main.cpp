@@ -25,10 +25,25 @@ int main() {
     scenes::init_glass_grid(scene, projective_matrix);
 
     const auto buffer = new RenderBuffer(OUTPUT_WIDTH, OUTPUT_HEIGHT, SAMPLE_GRID_SIZE);
+
+    const auto start = std::chrono::high_resolution_clock::now();
     buffer->render(scene, projective_matrix, 0.35 * std::numbers::pi);
+    const auto duration = std::chrono::high_resolution_clock::now() - start;
+
+    const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+    std::string time_string;
+    if (micros > 60000000) {
+        time_string = std::format("{} min {} s", micros / 60000000, (micros % 60000000) / 1000000);
+    } else if (micros > 1000000) {
+        time_string = std::format("{:.2f} s", static_cast<double>(micros) / 1000000);
+    } else if (micros > 1000) {
+        time_string = std::format("{:.2f} ms", static_cast<double>(micros) / 1000);
+    } else {
+        time_string = std::format("{} μs", micros);
+    }
 
     const std::string output_path = buffer->write_png("../out/out.png");
-    std::cout << "Output file to: " << output_path;
+    std::cout << std::format("Rendered scene and output file to [{}]. Time taken: {}", output_path, time_string);
 
     delete buffer;
 
