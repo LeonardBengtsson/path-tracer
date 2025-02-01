@@ -13,10 +13,11 @@
 class RenderBuffer {
 private:
     const size_t size_x, size_y;
+    const size_t sample_grid_size;
     color_util::Rgba * const buffer;
 
 public:
-    RenderBuffer(size_t size_x, size_t size_y);
+    RenderBuffer(size_t size_x, size_t size_y, size_t sample_grid_size = 1);
 
     ~RenderBuffer();
 

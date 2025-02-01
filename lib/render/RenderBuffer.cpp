@@ -11,8 +11,8 @@
 #include "../stb_image_write.h"
 #include "../render/color_util.h"
 
-RenderBuffer::RenderBuffer(const size_t size_x, const size_t size_y)
-  : size_x(size_x), size_y(size_y), buffer(new uint32_t[size_x * size_y]) {}
+RenderBuffer::RenderBuffer(const size_t size_x, const size_t size_y, const size_t sample_grid_size)
+  : size_x(size_x), size_y(size_y), sample_grid_size(sample_grid_size), buffer(new uint32_t[size_x * size_y]) {}
 
 RenderBuffer::~RenderBuffer() {
     delete buffer;
@@ -21,17 +21,29 @@ RenderBuffer::~RenderBuffer() {
 void RenderBuffer::render(const Scene &scene, const Matrix4x4 &projective_matrix, const double v_fov) const {
     auto ray_stack = RayStack(projective_matrix);
 
-    uint32_t index = 0;
-    for (uint32_t j = 0; j < size_y; j++) {
-        const double v = static_cast<double>(j) / size_y;
-        for (uint32_t i = 0; i < size_x; i++) {
-            const double u = static_cast<double>(i) / size_x;
+    const double sample_factor = 1.0 / (sample_grid_size * sample_grid_size);
+    const double sample_u_offset = 1.0 / (size_x * sample_grid_size);
+    const double sample_v_offset = 1.0 / (size_y * sample_grid_size);
 
-            ray_stack.start(v_fov, static_cast<double>(size_x) / static_cast<double>(size_y), {u, v});
-            LightSpectrum light = ray_stack.trace(scene);
+    size_t index = 0;
+    for (size_t j = 0; j < size_y; j++) {
+        const double pixel_v = static_cast<double>(j) / size_y;
+        for (size_t i = 0; i < size_x; i++) {
+            const double pixel_u = static_cast<double>(i) / size_x;
+
+            auto incoming_light = LightSpectrum();
+            for (size_t m = 0; m < sample_grid_size; m++) {
+                for (size_t n = 0; n < sample_grid_size; n++) {
+                    const double u = pixel_u + m * sample_u_offset;
+                    const double v = pixel_v + n * sample_v_offset;
+                    ray_stack.start(v_fov, static_cast<double>(size_x) / static_cast<double>(size_y), {u, v});
+                    LightSpectrum light = ray_stack.trace(scene);
+                    incoming_light.add_modified(light, LightTransformation::IDENTITY, sample_factor);
+                }
+            }
 
             double rgb[3];
-            light.to_rgb(rgb);
+            incoming_light.to_rgb(rgb);
             buffer[index] = color_util::pack_rgb_d(rgb);
 
             ray_stack.clear();
