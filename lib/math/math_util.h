@@ -8,6 +8,9 @@
 #include "Vec3.h"
 
 namespace math_util {
+    double signum(double x);
+    double minus_signum(double x);
+
     double lerp(double, double, double);
     Vec2 lerp(double, Vec2, Vec2);
     Vec2 lerp(Vec2, Vec2, Vec2);

@@ -9,9 +9,13 @@
 namespace scenes {
     void init_refraction_demo(Scene &scene, Matrix4x4 &projective_matrix);
 
-    void init_colored_grid(Scene &scene, Matrix4x4 &projective_matrix);
+    void init_colored_sphere_grid(Scene &scene, Matrix4x4 &projective_matrix);
 
     void init_glass_grid(Scene &scene, Matrix4x4 &projective_matrix);
+
+    void init_box_grid(Scene &scene, Matrix4x4 &projective_matrix);
+
+    void init_glass_boxes(Scene &scene, Matrix4x4 &projective_matrix);
 }
 
 #endif //SCENES_H

@@ -11,7 +11,7 @@
 
 class Ray {
 public:
-    static const Ray ZERO, X, Y, Z;
+    static const Ray X, Y, Z;
 
     Vec3 from, dir;
 

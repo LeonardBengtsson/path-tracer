@@ -38,6 +38,11 @@ Vec2 Vec2::operator*(const double d) const {
     return {x * d, y * d};
 }
 
+Vec2 Vec2::operator/(const Vec2 v) const {
+    return {x / v.x, y / v.y};
+}
+
+
 Vec2 Vec2::operator/(const double d) const {
     return {x / d, y / d};
 }

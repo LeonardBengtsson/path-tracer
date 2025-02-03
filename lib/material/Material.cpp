@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "../math/math_util.h"
+#include "../config.h"
 
 Material::Material(const double reflectivity, const double transparency, const double refractive_index, const LightSpectrum &emittance)
   : reflectivity(reflectivity),
@@ -15,6 +16,9 @@ Material::Material(const double reflectivity, const double transparency, const d
     emittance(emittance) {}
 
 LightSpectrum Material::eval_path(const SceneObject* const object, RayStack* const ray_stack, const Ray &incident_ray, const Vec3 &surface_normal) const {
+#if DEBUG_SHADE_NORMALS
+    return LightSpectrum::from_rgb(surface_normal.x * .5 + .5, surface_normal.y * .5 + .5, surface_normal.z * .5 + .5, 1);
+#else
     if (transparency > 0) {
         Ray internal_ray = incident_ray;
         if (refractive_index != 1) {
@@ -32,7 +36,7 @@ LightSpectrum Material::eval_path(const SceneObject* const object, RayStack* con
             }
         }
         double delta_dist;
-        Vec3 out_pos = Vec3::ZERO;
+        Vec3 out_pos = incident_ray.from;
         Vec3 out_normal = Vec3::ZERO;
         object->ray_cast_from_inside(internal_ray, delta_dist, out_pos, out_normal);
         ray_stack->push({out_pos, incident_ray.dir}, LightTransformation::of_factor(transparency), delta_dist);
@@ -44,5 +48,6 @@ LightSpectrum Material::eval_path(const SceneObject* const object, RayStack* con
     }
 
     return emittance.scaled(1 - transparency - reflectivity);
+#endif
 }
 

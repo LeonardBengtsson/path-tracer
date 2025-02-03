@@ -14,7 +14,7 @@ public:
 
     const Vec3 min, max;
 
-    Box(Vec3 min, Vec3 max);
+    Box(const Vec3 &min, const Vec3 &max);
 
     bool contains(const Vec3&) const;
 

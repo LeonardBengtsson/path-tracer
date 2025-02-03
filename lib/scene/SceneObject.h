@@ -12,18 +12,21 @@ class Material;
 class RayStack;
 
 class SceneObject {
-public:
+protected:
     const Box aabb;
+public:
     const Material* const material;
 
     SceneObject(Box, const Material*);
+
+    bool intersects(const Ray &ray) const;
 
     LightSpectrum eval_path(RayStack*, const Ray&, const Vec3&) const;
 
     virtual ~SceneObject() = default;
 
-    virtual bool ray_cast_from_outside(const Ray&, double&, Vec3&, Vec3&) const = 0;
-    virtual void ray_cast_from_inside(const Ray&, double&, Vec3&, Vec3&) const = 0;
+    virtual bool ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &point, Vec3 &normal) const = 0;
+    virtual void ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &point, Vec3 &normal) const = 0;
 };
 
 

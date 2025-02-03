@@ -5,6 +5,14 @@
 #include "math_util.h"
 
 namespace math_util {
+    double signum(const double x) {
+        return x < 0 ? -1 : 1;
+    }
+
+    double minus_signum(const double x) {
+        return x < 0 ? 1 : -1;
+    }
+
     double lerp(const double t, const double a, const double b) {
         return a + (b - a) * t;
     }

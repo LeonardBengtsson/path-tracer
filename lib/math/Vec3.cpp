@@ -42,6 +42,11 @@ Vec3 Vec3::operator*(const double d) const {
     return {x * d, y * d, z * d};
 }
 
+Vec3 Vec3::operator/(const Vec3 &v) const {
+    return {x / v.x, y / v.y, z / v.z};
+}
+
+
 Vec3 Vec3::operator/(const double d) const {
     return {x / d, y / d, z / d};
 }

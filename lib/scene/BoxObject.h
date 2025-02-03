@@ -1,18 +1,15 @@
 //
-// Created by Leonard on 2025-01-28.
+// Created by Leonard on 2025-02-03.
 //
 
-#ifndef SPHEREOBJECT_H
-#define SPHEREOBJECT_H
+#ifndef BOXOBJECT_H
+#define BOXOBJECT_H
 #include "SceneObject.h"
 
 
-class SphereObject final : public SceneObject {
+class BoxObject final : public SceneObject {
 public:
-    const Vec3 center;
-    const double radius;
-
-    SphereObject(const Vec3&, double, const Material*);
+    BoxObject(const Box &box, const Material *material);
 
     bool ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &point, Vec3 &normal) const override;
 
@@ -21,4 +18,4 @@ public:
 
 
 
-#endif //SPHEREOBJECT_H
+#endif //BOXOBJECT_H

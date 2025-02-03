@@ -25,6 +25,7 @@ public:
     Vec3 operator-(const Vec3&) const;
     Vec3 operator-(double) const;
     Vec3 operator*(double) const;
+    Vec3 operator/(const Vec3&) const;
     Vec3 operator/(double) const;
     double operator*(const Vec3&) const;
 

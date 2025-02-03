@@ -21,7 +21,7 @@ void Scene::iter_objects(void (*fn)(const SceneObject*)) const {
 
 void Scene::ray_cast(const Ray &ray, double &min_dist, Vec3 &hit_position, Vec3 &hit_normal_unnormalized, const SceneObject* &hit_object) const {
     for (const SceneObject *obj : objects) {
-        if (!obj->aabb.intersects(ray))
+        if (!obj->intersects(ray))
             continue;
         const bool outside_hit = obj->ray_cast_from_outside(ray, min_dist, hit_position, hit_normal_unnormalized);
         if (outside_hit) {

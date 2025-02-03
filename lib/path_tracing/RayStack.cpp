@@ -12,6 +12,7 @@
 #include "../math/math_util.h"
 #include "../math/Matrix4x4.h"
 #include "../math/Vec2.h"
+#include "../config.h"
 
 #ifndef DEPTH_LIMIT
 #define DEPTH_LIMIT 5

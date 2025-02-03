@@ -41,4 +41,7 @@ add_executable(path_tracer_2025
         lib/render/RenderBuffer.h
         src/scenes.h
         src/scenes.cpp
+        lib/scene/BoxObject.cpp
+        lib/scene/BoxObject.h
+        lib/config.h
 )

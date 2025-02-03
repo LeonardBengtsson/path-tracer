@@ -5,17 +5,19 @@
 #include "Ray.h"
 
 #include <cassert>
+#include <format>
+#include <iostream>
 
 #include "Vec3.h"
+#include "../config.h"
 
-const Ray Ray::ZERO = {Vec3::ZERO, Vec3::ZERO};
-const Ray Ray::X = {Vec3::ZERO, Vec3::X};
-const Ray Ray::Y = {Vec3::ZERO, Vec3::Y};
-const Ray Ray::Z = {Vec3::ZERO, Vec3::Z};
+const Ray Ray::X = {{0, 0, 0}, {1, 0, 0}};
+const Ray Ray::Y = {{0, 0, 0}, {0, 1, 0}};
+const Ray Ray::Z = {{0, 0, 0}, {0, 0, 1}};
 
 Ray::Ray(const Vec3 &from, const Vec3 &dir) : from(from), dir(dir) {
-#ifdef DEBUG
-    assert(dir.magn() == 1);
+#if DEBUG_ASSERTS
+    assert(std::abs(dir.magn() - 1) < .0000000001);
 #endif
 }
 

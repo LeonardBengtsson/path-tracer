@@ -70,7 +70,7 @@ bool SphereObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 
 
     min_dist = t1;
     point = ray.from + ray.dir * t1;
-    normal = point - center;
+    normal = (point - center).norm();
     return true;
 }
 
@@ -84,5 +84,5 @@ void SphereObject::ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &poin
 
     dist = t2;
     point = ray.from + ray.dir * t2;
-    normal = center - point;
+    normal = (center - point).norm();
 }

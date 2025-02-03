@@ -22,6 +22,7 @@ public:
     Vec2 operator-(Vec2) const;
     Vec2 operator-(double) const;
     Vec2 operator*(double) const;
+    Vec2 operator/(Vec2) const;
     Vec2 operator/(double) const;
     double operator*(Vec2) const;
 
