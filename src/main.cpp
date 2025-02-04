@@ -7,17 +7,10 @@
 #include <filesystem>
 #include <iostream>
 
-#define DEBUG
-
 #include "scenes.h"
 #include "../lib/render/RenderBuffer.h"
 #include "../lib/scene/Scene.h"
-
-#define OUTPUT_WIDTH 1920
-#define OUTPUT_HEIGHT 1080
-
-#define DEPTH_LIMIT 20
-#define SAMPLE_GRID_SIZE 2
+#include "../lib/config.h"
 
 int main() {
     auto scene = Scene(LightSpectrum());
