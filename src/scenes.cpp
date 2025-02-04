@@ -7,18 +7,19 @@
 #include "../lib/scene/BoxObject.h"
 #include "../lib/scene/SphereObject.h"
 
-static const auto glass_material = Material(.2, .8, 1.5, LightSpectrum());
-static const auto non_refractive_glass_material = Material(.2, .8, 1, LightSpectrum());
-static const auto white_emissive_material = Material(0, 0, 1, LightSpectrum::from_rgb(1, 1, 1, 1));
-static const auto red_material = Material(.5, 0, 1, LightSpectrum::from_rgb(1, 0, 0, 1));
-static const auto green_material = Material(.5, 0, 1, LightSpectrum::from_rgb(0, 1, 0, 1));
-static const auto blue_material = Material(.5, 0, 1, LightSpectrum::from_rgb(0, 0, 1, 1));
-static const auto cyan_material = Material(.5, 0, 1, LightSpectrum::from_rgb(0, 1, 1, 1));
-static const auto magenta_material = Material(.5, 0, 1, LightSpectrum::from_rgb(1, 0, 1, 1));
-static const auto yellow_material = Material(.5, 0, 1, LightSpectrum::from_rgb(1, 1, 0, 1));
-static const auto transparent_reflective_material = Material(.5, .4, 1.2, LightSpectrum::from_rgb(1, 1, 1, 1));
+static const auto glass_material = Material(.15, 1, 1.5, LightSpectrum());
+static const auto non_refractive_glass_material = Material(.1, .8, 1, LightSpectrum());
+static const auto white_emissive_material = Material(1, 0, 1, LightSpectrum::from_rgb(1, 1, 1, 1));
+static const auto red_material = Material(.9, 0, 1, LightSpectrum::from_rgb(1, 0, 0, 1));
+static const auto green_material = Material(.9, 0, 1, LightSpectrum::from_rgb(0, 1, 0, 1));
+static const auto blue_material = Material(.9, 0, 1, LightSpectrum::from_rgb(0, 0, 1, 1));
+static const auto cyan_material = Material(.9, 0, 1, LightSpectrum::from_rgb(0, 1, 1, 1));
+static const auto magenta_material = Material(.9, 0, 1, LightSpectrum::from_rgb(1, 0, 1, 1));
+static const auto yellow_material = Material(.9, 0, 1, LightSpectrum::from_rgb(1, 1, 0, 1));
+static const auto transparent_reflective_material = Material(.1, .5, 1.2, LightSpectrum::from_rgb(1, 1, 1, 1));
 static const auto completely_transparent_material = Material(0, 1, 1, LightSpectrum());
-static const auto completely_reflective_material = Material(1, 0, 1, LightSpectrum());
+static const auto completely_reflective_material = Material(0, 0, 1, LightSpectrum());
+static const auto metal_material = Material(.1, 0, 1, LightSpectrum());
 
 void scenes::init_refraction_demo(Scene &scene, Matrix4x4 &projective_matrix) {
     scene.add_object(new SphereObject(Vec3(0, 1000020, 0), 1000000, &white_emissive_material));
@@ -88,7 +89,7 @@ void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
         },
         &white_emissive_material)
     );
-    constexpr int M = 2;
+    constexpr int M = 1;
     for (int i = -M; i <= M; i++) {
         for (int j = -M; j <= M; j++) {
             for (int k = -M; k <= M; k++) {
@@ -96,7 +97,7 @@ void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
                 if ((i + j + k) % 2 == 0) {
                     material = &glass_material;
                 } else {
-                    material = &red_material;
+                    material = &metal_material;
                 }
                 scene.add_object(new BoxObject({{i - .2, j - .2, k - .2}, {i + .2, j + .2, k + .2}}, material));
             }
@@ -107,7 +108,7 @@ void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
             Vec3(1, 2, 3).norm(),
             Vec3::Y
         ),
-        Vec3(-3, -6, -9)
+        Vec3(-1, -2, -3)
     );
 }
 
