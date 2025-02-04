@@ -63,10 +63,14 @@ bool SphereObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 
     if (D < 0 || p_half > 0)
         return false;
 
-    const double t1 = -p_half - std::sqrt(D);
-
-    if (t1 > min_dist)
+    //   min_dist < -p_half - √D
+    // ⇔       √D < -(p_half + min_dist)
+    // ⇔        D < (p_half + min_dist)² AND p_half + min_dist < 0
+    const double pd = p_half + min_dist;
+    if (D < pd * pd && pd < 0)
         return false;
+
+    const double t1 = -p_half - std::sqrt(D);
 
     min_dist = t1;
     point = ray.from + ray.dir * t1;

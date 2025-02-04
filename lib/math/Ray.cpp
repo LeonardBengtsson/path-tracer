@@ -17,7 +17,7 @@ const Ray Ray::Z = {{0, 0, 0}, {0, 0, 1}};
 
 Ray::Ray(const Vec3 &from, const Vec3 &dir) : from(from), dir(dir) {
 #if DEBUG_ASSERTS
-    assert(std::abs(dir.magn() - 1) < .0000000001);
+    assert(std::abs(dir.sq() - 1) < .0000001);
 #endif
 }
 
