@@ -37,8 +37,10 @@ void RayStack::clear() {
     stack.clear();
 }
 
-void RayStack::push(const Ray &ray, const LightTransformation &light_transformation, const double delta_dist) {
-    stack.emplace_back(ray, current_depth, current_distance + delta_dist, current_transformation.combine(light_transformation));
+void RayStack::push(const Ray &ray, const LightTransformation &light_transformation, const double delta_dist, const size_t additional_depth) {
+    const size_t depth = current_depth + additional_depth;
+    if (depth <= DEPTH_LIMIT)
+        stack.emplace_back(ray, depth, current_distance + delta_dist, current_transformation.combine(light_transformation));
 }
 
 LightSpectrum RayStack::trace(const Scene &scene) {

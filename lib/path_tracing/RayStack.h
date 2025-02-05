@@ -40,7 +40,7 @@ public:
     explicit RayStack(const Matrix4x4& = Matrix4x4::IDENT);
 
     void start(double, double, Vec2);
-    void push(const Ray&, const LightTransformation&, double = 0);
+    void push(const Ray &ray, const LightTransformation &light_transformation, double delta_dist = 0, size_t additional_depth = 0);
     void clear();
     LightSpectrum trace(const Scene&);
 };

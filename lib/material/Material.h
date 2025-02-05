@@ -14,12 +14,13 @@ class SceneObject;
 class Material {
 private:
     const double roughness;
+    const double minus_inv_attenuation_length;
     const double transparency;
     const double refractive_index;
     const LightSpectrum emittance;
 
 public:
-    Material(double roughness, double transparency, double refractive_index, const LightSpectrum &emittance);
+    Material(double roughness, double attenuation_length, double transparency, double refractive_index, const LightSpectrum &emittance);
 
     LightSpectrum eval_path(const SceneObject*, RayStack*, const Ray&, const Vec3&) const;
 };

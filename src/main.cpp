@@ -36,7 +36,7 @@ int main() {
     }
 
     const std::string output_path = buffer->write_png("../out/out.png");
-    std::cout << std::format("Rendered scene and output file to [{}]. Time taken: {}", output_path, time_string);
+    std::cout << std::format("Rendered scene and output file to [{}] in {}", output_path, time_string);
 
     delete buffer;
 

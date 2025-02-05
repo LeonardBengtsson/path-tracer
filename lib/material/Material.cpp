@@ -9,8 +9,9 @@
 #include "../math/math_util.h"
 #include "../config.h"
 
-Material::Material(const double roughness, const double transparency, const double refractive_index, const LightSpectrum &emittance)
+Material::Material(const double roughness, const double attenuation_length, const double transparency, const double refractive_index, const LightSpectrum &emittance)
   : roughness(roughness),
+    minus_inv_attenuation_length(attenuation_length == -1 ? 0 : -1 / attenuation_length),
     transparency(transparency),
     refractive_index(refractive_index),
     emittance(emittance) {}
@@ -81,12 +82,15 @@ LightSpectrum Material::eval_path(const SceneObject* const object, RayStack* con
             double escape_factor;
             calc_refraction(refractive_index, internal_hit_normal, internal_ray.dir, escape_dir, continued_internal_factor, escape_factor);
 
-            if (escape_factor > 0)
-                ray_stack->push({internal_hit_pos, escape_dir}, LightTransformation::of_factor(internal_factor * escape_factor * (1 - roughness)), internal_dist);
+            internal_dist += delta_dist;
+            if (escape_factor > 0) {
+                const Ray escape_ray = {internal_hit_pos, escape_dir};
+                const double total_factor = internal_factor * escape_factor * (1 - roughness) * std::exp(internal_dist * minus_inv_attenuation_length);
+                ray_stack->push(escape_ray, LightTransformation::of_factor(total_factor), internal_dist, bounces + 1);
+            }
 
             internal_ray = {internal_hit_pos, math_util::reflect(internal_ray.dir, internal_hit_normal)};
             internal_factor *= continued_internal_factor * (1 - roughness);
-            internal_dist += delta_dist;
         }
     } else if (roughness < 1) {
         const Ray reflected_ray = {incident_ray.from, math_util::reflect(incident_ray.dir, surface_normal)};

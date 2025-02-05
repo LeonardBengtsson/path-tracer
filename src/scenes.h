@@ -9,6 +9,8 @@
 namespace scenes {
     void init_refraction_demo(Scene &scene, Matrix4x4 &projective_matrix);
 
+    void init_translucency_demo(Scene &scene, Matrix4x4 &projective_matrix);
+
     void init_colored_sphere_grid(Scene &scene, Matrix4x4 &projective_matrix);
 
     void init_glass_grid(Scene &scene, Matrix4x4 &projective_matrix);
