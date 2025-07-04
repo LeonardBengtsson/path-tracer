@@ -59,6 +59,18 @@ double Vec3::operator*(const Vec3 &v) const {
     return x * v.x + y * v.y + z * v.z;
 }
 
+double Vec3::component(const Axis axis) const {
+    switch (axis) {
+    case Axis::X:
+        return x;
+    case Axis::Y:
+        return y;
+    default:
+        return z;
+    }
+}
+
+
 double Vec3::sq() const {
     return x*x + y*y + z*z;
 }

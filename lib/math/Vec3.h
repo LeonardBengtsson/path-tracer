@@ -7,6 +7,7 @@
 #include <string>
 
 #include "Vec2.h"
+#include "../util/Axis.h"
 
 
 class Vec3 {
@@ -30,6 +31,8 @@ public:
     Vec3 operator/(const Vec3&) const;
     Vec3 operator/(double) const;
     double operator*(const Vec3&) const;
+
+    double component(Axis axis) const;
 
     double sq() const;
     double magn() const;

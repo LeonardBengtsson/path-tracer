@@ -9,12 +9,15 @@
 #include "../math/Vec3.h"
 #include "scene_objects/SceneObject.h"
 #include "../render/LightSpectrum.h"
+#include "../util/AabbBvh.h"
 
 class SceneObject;
 
 class Scene {
 private:
     std::vector<const SceneObject*> objects;
+
+    AabbBvh *aabb_bvh = nullptr;
 public:
     const LightSpectrum ambient_light;
 
@@ -22,9 +25,11 @@ public:
 
     void add_object(const SceneObject*);
 
-    void iter_objects(void (*)(const SceneObject*)) const;
+    void init(); // initialize bounding volume hierarchy
 
-    void ray_cast(const Ray&, double&, Vec3&, Vec3&, const SceneObject*&) const;
+    void iter_objects(void (*fn)(const SceneObject*)) const;
+
+    void ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const SceneObject* &hit_object) const;
 };
 
 
