@@ -6,7 +6,8 @@
 #define SCENE_H
 #include <vector>
 
-#include "SceneObject.h"
+#include "../math/Vec3.h"
+#include "scene_objects/SceneObject.h"
 #include "../render/LightSpectrum.h"
 
 class SceneObject;

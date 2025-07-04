@@ -27,21 +27,21 @@ add_executable(path_tracer_2025
         lib/render/LightSpectrum.h
         lib/path_tracing/RayStack.cpp
         lib/path_tracing/RayStack.h
-        lib/scene/SceneObject.cpp
-        lib/scene/SceneObject.h
-        lib/math/Box.cpp
-        lib/math/Box.h
+        lib/scene/scene_objects/SceneObject.cpp
+        lib/scene/scene_objects/SceneObject.h
+        lib/math/Aabb.cpp
+        lib/math/Aabb.h
         lib/render/color_util.cpp
         lib/render/color_util.h
         lib/path_tracing/LightTransformation.cpp
         lib/path_tracing/LightTransformation.h
-        lib/scene/SphereObject.cpp
-        lib/scene/SphereObject.h
+        lib/scene/scene_objects/SphereObject.cpp
+        lib/scene/scene_objects/SphereObject.h
         lib/render/RenderBuffer.cpp
         lib/render/RenderBuffer.h
         src/scenes.h
         src/scenes.cpp
-        lib/scene/BoxObject.cpp
-        lib/scene/BoxObject.h
+        lib/scene/scene_objects/BoxObject.cpp
+        lib/scene/scene_objects/BoxObject.h
         lib/config.h
 )

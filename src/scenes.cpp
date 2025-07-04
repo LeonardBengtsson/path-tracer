@@ -4,8 +4,8 @@
 
 #include "scenes.h"
 
-#include "../lib/scene/BoxObject.h"
-#include "../lib/scene/SphereObject.h"
+#include "../lib/scene/scene_objects/BoxObject.h"
+#include "../lib/scene/scene_objects/SphereObject.h"
 
 static const auto white_material = Material(1, 0, 0, 1, LightSpectrum::from_rgb(1, 1, 1, 1));
 static const auto red_material = Material(.9, -1, 0, 1, LightSpectrum::from_rgb(1, 0, 0, 1));

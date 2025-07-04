@@ -4,12 +4,14 @@
 
 #include "BoxObject.h"
 
-#include "../math/math_util.h"
+#include <cmath>
 
-BoxObject::BoxObject(const Box &box, const Material *material)
+#include "../../math/math_util.h"
+
+BoxObject::BoxObject(const Aabb &box, const Material *material)
   : SceneObject(box, material) {}
 
-bool BoxObject::ray_cast_from_outside(const Ray& ray, double& min_dist, Vec3& point, Vec3& normal) const {
+bool BoxObject::ray_cast_from_outside(const Ray& ray, double& min_dist, Vec3& pos, Vec3& normal) const {
     double tx0 = (aabb.min.x - ray.from.x) / ray.dir.x;
     double tx1 = (aabb.max.x - ray.from.x) / ray.dir.x;
     if (tx0 > tx1)
@@ -36,7 +38,7 @@ bool BoxObject::ray_cast_from_outside(const Ray& ray, double& min_dist, Vec3& po
         return false;
 
     min_dist = t;
-    point = ray.from + ray.dir * t;
+    pos = ray.from + ray.dir * t;
     if (t == tx0) {
         normal = {math_util::minus_signum(ray.dir.x), 0, 0};
     } else if (t == ty0) {
@@ -47,7 +49,7 @@ bool BoxObject::ray_cast_from_outside(const Ray& ray, double& min_dist, Vec3& po
     return true;
 }
 
-void BoxObject::ray_cast_from_inside(const Ray& ray, double& dist, Vec3& point, Vec3& normal) const {
+void BoxObject::ray_cast_from_inside(const Ray& ray, double& dist, Vec3& pos, Vec3& normal) const {
     const Vec3 corner = {
         ray.dir.x > 0 ? aabb.max.x : aabb.min.x,
         ray.dir.y > 0 ? aabb.max.y : aabb.min.y,
@@ -56,15 +58,15 @@ void BoxObject::ray_cast_from_inside(const Ray& ray, double& dist, Vec3& point, 
     const Vec3 t = (corner - ray.from) / ray.dir;
     if (t.x < t.y && t.x < t.z) {
         dist = t.x;
-        point = ray.from + ray.dir * t.x;
+        pos = ray.from + ray.dir * t.x;
         normal = ray.dir.x > 0 ? Vec3(-1, 0, 0) : Vec3(1, 0, 0);
     } else if (t.y < t.z) {
         dist = t.y;
-        point = ray.from + ray.dir * t.y;
+        pos = ray.from + ray.dir * t.y;
         normal = ray.dir.y > 0 ? Vec3(0, -1, 0) : Vec3(0, 1, 0);
     } else {
         dist = t.z;
-        point = ray.from + ray.dir * t.z;
+        pos = ray.from + ray.dir * t.z;
         normal = ray.dir.z > 0 ? Vec3(0, 0, -1) : Vec3(0, 0, 1);
     }
 }

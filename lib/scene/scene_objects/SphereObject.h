@@ -14,9 +14,9 @@ public:
 
     SphereObject(const Vec3&, double, const Material*);
 
-    bool ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &point, Vec3 &normal) const override;
+    bool ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal) const override;
 
-    void ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &point, Vec3 &normal) const override;
+    void ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &pos, Vec3 &normal) const override;
 };
 
 

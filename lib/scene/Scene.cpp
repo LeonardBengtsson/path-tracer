@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 
-#include "SceneObject.h"
+#include "scene_objects/SceneObject.h"
 
 Scene::Scene(const LightSpectrum &ambient_light) : ambient_light(ambient_light) {}
 

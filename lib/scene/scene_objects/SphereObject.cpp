@@ -5,15 +5,22 @@
 #include "SphereObject.h"
 
 #include <cmath>
+#include <cassert>
 
-#include "../math/math_util.h"
+#include "../../math/math_util.h"
+#include "../../config.h"
 
 SphereObject::SphereObject(const Vec3 &center, const double radius, const Material* const material)
   : SceneObject({center - radius, center + radius}, material),
     center(center),
-    radius(radius) {}
+    radius(radius)
+{
+#ifdef DEBUG_ASSERTS
+    assert(radius >= 0);
+#endif
+}
 
-bool SphereObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &point, Vec3 &normal) const {
+bool SphereObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal) const {
     // assumes ray dir is unit length, and ray origin is not inside sphere
     //
     // given ray origin (f), direction (d), sphere center (c), radius (r):
@@ -24,7 +31,7 @@ bool SphereObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 
     // |Δ + td|² = r² ⇔
     // (Δ + td)·(Δ + td) = r² ⇔
     // (d·d)t² + (2Δ·d)t + Δ·Δ - r² = 0 ⇔
-    // t² + (2Δ·d)t + Δ·Δ - r² = 0 (assume |d| = 0)
+    // t² + (2Δ·d)t + Δ·Δ - r² = 0 (assume |d| = 1)
     //
     // let p_half = Δ·d
     // let q = Δ·Δ - r²
@@ -73,12 +80,12 @@ bool SphereObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 
     const double t1 = -p_half - std::sqrt(D);
 
     min_dist = t1;
-    point = ray.from + ray.dir * t1;
-    normal = (point - center).norm();
+    pos = ray.from + ray.dir * t1;
+    normal = (pos - center).norm();
     return true;
 }
 
-void SphereObject::ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &point, Vec3 &normal) const {
+void SphereObject::ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &pos, Vec3 &normal) const {
     const Vec3 Delta = ray.from - center;
     const double p_half = Delta * ray.dir;
     const double q = Delta.sq() - radius * radius;
@@ -87,6 +94,6 @@ void SphereObject::ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &poin
     const double t2 = -p_half + std::sqrt(D);
 
     dist = t2;
-    point = ray.from + ray.dir * t2;
-    normal = (center - point).norm();
+    pos = ray.from + ray.dir * t2;
+    normal = (center - pos).norm();
 }
