@@ -4,12 +4,14 @@
 
 #ifndef VEC3_H
 #define VEC3_H
+#include <string>
+
 #include "Vec2.h"
 
 
 class Vec3 {
 public:
-    static const Vec3 ZERO, ONE, X, Y, Z;
+    static const Vec3 ZERO, ONE, X, Y, Z, MIN, MAX;
 
     double x, y, z;
 
@@ -32,6 +34,11 @@ public:
     double sq() const;
     double magn() const;
     Vec3 norm() const;
+
+    std::string debug_string() const;
+
+    static Vec3 min(const Vec3&, const Vec3&);
+    static Vec3 max(const Vec3&, const Vec3&);
 
     static Vec3 cross(const Vec3&, const Vec3&);
 };

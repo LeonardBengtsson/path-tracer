@@ -9,10 +9,10 @@
 #include "../math/math_util.h"
 #include "../config.h"
 
-Material::Material(const double roughness, const double attenuation_length, const double transparency, const double refractive_index, const LightSpectrum &emittance)
+Material::Material(const double roughness, const double attenuation_length, const bool transparent, const double refractive_index, const LightSpectrum &emittance)
   : roughness(roughness),
     minus_inv_attenuation_length(attenuation_length == -1 ? 0 : -1 / attenuation_length),
-    transparency(transparency),
+    transparent(transparent),
     refractive_index(refractive_index),
     emittance(emittance) {}
 
@@ -55,7 +55,7 @@ LightSpectrum Material::eval_path(const SceneObject* const object, RayStack* con
 #if DEBUG_SHADE_NORMALS
     return LightSpectrum::from_rgb(surface_normal.x * .5 + .5, surface_normal.y * .5 + .5, surface_normal.z * .5 + .5, 1);
 #else
-    if (transparency > 0) {
+    if (transparent) {
         const Ray reflected_ray = {incident_ray.from, math_util::reflect(incident_ray.dir, surface_normal)};
         double reflection_factor = 0;
         Ray internal_ray = incident_ray;

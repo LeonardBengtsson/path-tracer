@@ -4,14 +4,18 @@
 
 #include "Vec3.h"
 #include <cmath>
+#include <format>
+#include <bits/max_size_type.h>
 
 const Vec3 Vec3::ZERO = {0, 0, 0};
 const Vec3 Vec3::ONE = {1, 1, 1};
 const Vec3 Vec3::X = {1, 0, 0};
 const Vec3 Vec3::Y = {0, 1, 0};
 const Vec3 Vec3::Z = {0, 0, 1};
+const Vec3 Vec3::MIN = {std::numeric_limits<double>::min()};
+const Vec3 Vec3::MAX = {std::numeric_limits<double>::max()};
 
-Vec3::Vec3(const Vec3 &v) : x(v.x), y(v.y), z(v.z) {}
+Vec3::Vec3(const Vec3 &v) = default;
 Vec3::Vec3(const double x, const double y, const double z) : x(x), y(y), z(z) {}
 Vec3::Vec3(const Vec2 xy, const double z) : x(xy.x), y(xy.y), z(z) {}
 Vec3::Vec3(const double x, const Vec2 yz) : x(x), y(yz.x), z(yz.y) {}
@@ -66,6 +70,18 @@ double Vec3::magn() const {
 Vec3 Vec3::norm() const {
     const double m = magn();
     return {x / m, y / m, z / m};
+}
+
+std::string Vec3::debug_string() const {
+    return std::format("({}, {}, {})", x, y, z);
+}
+
+Vec3 Vec3::min(const Vec3 &v, const Vec3 &w) {
+    return {std::min(v.x, w.x), std::min(v.y, w.y), std::min(v.z, w.z)};
+}
+
+Vec3 Vec3::max(const Vec3 &v, const Vec3 &w) {
+    return {std::max(v.x, w.x), std::max(v.y, w.y), std::max(v.z, w.z)};
 }
 
 Vec3 Vec3::cross(const Vec3 &v, const Vec3 &w) {

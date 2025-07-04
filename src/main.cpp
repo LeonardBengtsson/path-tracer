@@ -2,7 +2,6 @@
 // Created by Leonard on 2025-01-22.
 //
 
-#include <cstdint>
 #include <format>
 #include <filesystem>
 #include <iostream>
@@ -11,6 +10,7 @@
 #include "../lib/render/RenderBuffer.h"
 #include "../lib/scene/Scene.h"
 #include "../lib/config.h"
+#include "../lib/util/time_util.h"
 
 int main() {
     auto scene = Scene(LightSpectrum());
@@ -19,24 +19,13 @@ int main() {
 
     const auto buffer = new RenderBuffer(OUTPUT_WIDTH, OUTPUT_HEIGHT, SAMPLE_GRID_SIZE);
 
-    const auto start = std::chrono::high_resolution_clock::now();
-    buffer->render(scene, projective_matrix, 0.35 * std::numbers::pi);
-    const auto duration = std::chrono::high_resolution_clock::now() - start;
-
-    const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
-    std::string time_string;
-    if (micros > 60000000) {
-        time_string = std::format("{} min {} s", micros / 60000000, (micros % 60000000) / 1000000);
-    } else if (micros > 1000000) {
-        time_string = std::format("{:.2f} s", static_cast<double>(micros) / 1000000);
-    } else if (micros > 1000) {
-        time_string = std::format("{:.2f} ms", static_cast<double>(micros) / 1000);
-    } else {
-        time_string = std::format("{} μs", micros);
-    }
+    start_stopwatch();
+    buffer->render(scene, projective_matrix, (V_FOV_DEGREES) / 180.0 * std::numbers::pi);
+    std::string render_time_string = format_stopwatch();
+    std::cout << std::format("Rendered scene in {}", render_time_string) << std::endl;
 
     const std::string output_path = buffer->write_png("../out/out.png");
-    std::cout << std::format("Rendered scene and output file to [{}] in {}", output_path, time_string);
+    std::cout << std::format("Output file to [{}]", output_path) << std::endl;
 
     delete buffer;
 

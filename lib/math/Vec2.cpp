@@ -4,6 +4,8 @@
 
 #include "Vec2.h"
 #include <cmath>
+#include <format>
+#include <string>
 
 const Vec2 Vec2::ZERO = {0, 0};
 const Vec2 Vec2::ONE = {1,  1};
@@ -62,4 +64,16 @@ double Vec2::magn() const {
 Vec2 Vec2::norm() const {
     const double m = magn();
     return {x / m, y / m};
+}
+
+std::string Vec2::debug_string() const {
+    return std::format("({}, {})", x, y);
+}
+
+Vec2 Vec2::min(const Vec2 &v, const Vec2 &w) {
+    return {std::min(v.x, w.x), std::min(v.y, w.y)};
+}
+
+Vec2 Vec2::max(const Vec2 &v, const Vec2 &w) {
+    return {std::max(v.x, w.x), std::max(v.y, w.y)};
 }

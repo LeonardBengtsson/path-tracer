@@ -4,7 +4,7 @@
 
 #ifndef VEC2_H
 #define VEC2_H
-
+#include <string>
 
 
 class Vec2 {
@@ -29,6 +29,11 @@ public:
     double sq() const;
     double magn() const;
     Vec2 norm() const;
+
+    std::string debug_string() const;
+
+    static Vec2 min(const Vec2&, const Vec2&);
+    static Vec2 max(const Vec2&, const Vec2&);
 };
 
 
