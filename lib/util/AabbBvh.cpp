@@ -9,7 +9,7 @@
 #include <format>
 #include <utility>
 
-#include "bvh_util.h"
+#include "aabb_util.h"
 #include "../scene/scene_objects/BoxObject.h"
 
 AabbBvh::Node::Node(Child child, Aabb aabb)

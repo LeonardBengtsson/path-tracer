@@ -91,7 +91,12 @@ void SphereObject::ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &pos,
     const double q = Delta.sq() - radius * radius;
     const double D = p_half * p_half - q;
 
-    const double t2 = -p_half + std::sqrt(D);
+    double t2;
+    if (D >= 0) {
+        t2 = -p_half + std::sqrt(D);
+    } else {
+        t2 = 0;
+    }
 
     dist = t2;
     pos = ray.from + ray.dir * t2;

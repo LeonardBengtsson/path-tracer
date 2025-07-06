@@ -18,6 +18,8 @@ namespace scenes {
     void init_box_grid(Scene &scene, Matrix4x4 &projective_matrix);
 
     void init_glass_boxes(Scene &scene, Matrix4x4 &projective_matrix);
+
+    void init_pyramid_mesh(Scene &scene, Matrix4x4 &projective_matrix);
 }
 
 #endif //SCENES_H

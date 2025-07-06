@@ -5,6 +5,7 @@
 #include "scenes.h"
 
 #include "../lib/scene/scene_objects/BoxObject.h"
+#include "../lib/scene/scene_objects/MeshObject.h"
 #include "../lib/scene/scene_objects/SphereObject.h"
 
 static const auto white_material = Material(1, 0, false, 1, LightSpectrum::from_rgb(1, 1, 1, 1));
@@ -143,5 +144,25 @@ void scenes::init_glass_boxes(Scene &scene, Matrix4x4 &projective_matrix) {
             Vec3::Y
         ),
         Vec3(-5, -10, -15)
+    );
+}
+
+void scenes::init_pyramid_mesh(Scene &scene, Matrix4x4 &projective_matrix) {
+    std::vector<Vec3> tri_vertices = {
+        {1, 1, -1}, {-1, 1, -1}, {0, -1, 0},
+        {1, 1, 1}, {1, 1, -1}, {0, -1, 0},
+        {-1, 1, 1}, {1, 1, 1}, {0, -1, 0},
+        {-1, 1, -1}, {-1, 1, 1}, {0, -1, 0},
+        {-1, 1, -1}, {1, 1, 1}, {-1, 1, 1},
+        {1, 1, 1}, {-1, 1, -1}, {1, 1, -1},
+    };
+    scene.add_object(new MeshObject(std::move(tri_vertices), &translucent_material));
+    scene.add_object(new SphereObject(Vec3(0, 1000020, 0), 1000000, &white_material));
+    projective_matrix = Matrix4x4(
+        Matrix3x3::from_forward_down_vecs(
+            Vec3(1, 2, 3).norm(),
+            Vec3::Y
+        ),
+        Vec3(-1, -2, -3)
     );
 }

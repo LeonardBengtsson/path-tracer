@@ -4,6 +4,7 @@
 
 #ifndef SPHEREOBJECT_H
 #define SPHEREOBJECT_H
+
 #include "SceneObject.h"
 
 

@@ -31,6 +31,8 @@ public:
     std::string to_string() const;
 
     static Matrix3x3 from_forward_down_vecs(const Vec3&, const Vec3&);
+
+    static double det(const Vec3 &v1, const Vec3 &v2, const Vec3 &v3);
 };
 
 
