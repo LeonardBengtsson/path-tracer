@@ -1,4 +1,4 @@
-This project is a rendering engine that attempts to reproduce realistic imagery by simulating individual light rays, following them along a path. It currently models some basic physical material properties, such as transparency, emittance, and refractive properties, with more planned. The program currently generates still images using CPU-only rendering. I am planning to add acceleration structures to speed up rendering, and might add GPU parallelization in the future, which would make the rendering process considerably faster.
+This project is a rendering engine that attempts to reproduce realistic imagery by simulating individual light rays, following them along a path. It currently models some basic physical material properties, such as transparency, emittance, and refractive properties, with more planned. The program currently generates still images using CPU-only rendering, features basic BVH optimization. I am planning to optimize the rendering process further, and might add GPU parallelization in the future, which would make the rendering process considerably faster.
 
 <div>
     <img src="example-images/out-280.png" width="49%">
@@ -17,7 +17,7 @@ This project is currently not very user-friendly, and rendering instructions can
 
 # Features
 
-This project currently features two types of scene objects: spheres and cuboids. Each object has to be assigned a material, the properties of which are described below. Currently, the program simulates refraction and translucency, simulating multiple internal reflections and refractions. 
+The renderer currently supports rendering arbitrary meshes, as well as some primitive shapes, although support for the latter may be dropped in the future for performance. Each object has to be assigned a material, the properties of which are described below. Currently, the program simulates refraction and translucency, simulating multiple internal reflections and refractions. 
 
 ## Material properties
 | Property           | Explanation                                                                                                                                                                 |
