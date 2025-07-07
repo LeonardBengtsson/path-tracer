@@ -20,6 +20,8 @@ namespace scenes {
     void init_glass_boxes(Scene &scene, Matrix4x4 &projective_matrix);
 
     void init_pyramid_mesh(Scene &scene, Matrix4x4 &projective_matrix);
+
+    bool init_single_obj(Scene &scene, Matrix4x4 &projective_matrix, const std::string &obj_path);
 }
 
 #endif //SCENES_H

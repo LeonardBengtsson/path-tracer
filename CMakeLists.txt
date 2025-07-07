@@ -52,4 +52,5 @@ add_executable(path_tracer_2025
         lib/util/time_util.h
         lib/scene/scene_objects/MeshObject.cpp
         lib/scene/scene_objects/MeshObject.h
+        lib/util/mesh_util.h
 )

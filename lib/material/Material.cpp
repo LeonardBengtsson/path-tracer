@@ -26,7 +26,7 @@ void calc_refraction(
 ) {
 #if ENABLE_POLARIZATION
 #else
-    const Vec3 negative_normal = -surface_normal;
+    const Vec3 negative_normal = (surface_normal * incident_dir > 0) ? surface_normal : -surface_normal;
     const double cos_t = incident_dir * negative_normal;
     const double sin_t = std::sqrt(1 - cos_t * cos_t);
     const double sin_i = sin_t * refractive_index_quotient;
