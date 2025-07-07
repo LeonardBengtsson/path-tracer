@@ -24,12 +24,12 @@ inline Aabb wrap_aabb(const std::span<const Vec3> points) {
     return {min, max};
 }
 
-inline Aabb wrap_aabb(const std::span<const SceneObject *const> objects) {
+inline Aabb wrap_aabb(const std::span<std::unique_ptr<SceneObject>> objects) {
     if (objects.empty())
         return {Vec3::ZERO, Vec3::ZERO};
     Vec3 min = Vec3::MAX;
     Vec3 max = Vec3::MIN;
-    for (const SceneObject* o : objects) {
+    for (const auto &o : objects) {
         Aabb aabb = o->aabb;
         min = Vec3::min(min, aabb.min);
         max = Vec3::max(max, aabb.max);

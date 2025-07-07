@@ -4,6 +4,7 @@
 
 #ifndef SCENE_H
 #define SCENE_H
+
 #include <vector>
 
 #include "../math/Vec3.h"
@@ -15,7 +16,7 @@ class SceneObject;
 
 class Scene {
 private:
-    std::vector<const SceneObject*> objects;
+    std::vector<std::unique_ptr<SceneObject>> objects;
 
     AabbBvh *aabb_bvh = nullptr;
 public:
@@ -23,11 +24,11 @@ public:
 
     explicit Scene(const LightSpectrum&);
 
-    void add_object(const SceneObject*);
+    void add_object(std::unique_ptr<SceneObject> &&object);
 
     void init(); // initialize bounding volume hierarchy
 
-    void iter_objects(void (*fn)(const SceneObject*)) const;
+    void iter_objects(void (*fn)(const std::unique_ptr<SceneObject>&)) const;
 
     void ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const SceneObject* &hit_object) const;
 };

@@ -21,7 +21,7 @@ class SceneObject;
 class AabbBvh {
 public:
     struct Node {
-        using Leaf = std::span<const SceneObject*>;
+        using Leaf = std::span<std::unique_ptr<SceneObject>>;
         struct Branch {
             Axis axis;
             std::array<std::unique_ptr<Node>, 2> children;
@@ -45,16 +45,14 @@ private:
         explicit TraversalRecord(const Node &node);
     };
 
-    const std::span<const SceneObject *const> objects;
+    const std::span<std::unique_ptr<SceneObject>> objects;
 
     std::unique_ptr<Node> root_node;
 
     std::stack<TraversalRecord> traversal_stack;
 
 public:
-    AabbBvh(std::span<const SceneObject*> objects, uint32_t max_tree_height, uint32_t min_leaf_size);
-
-    static AabbBvh* empty();
+    AabbBvh(std::span<std::unique_ptr<SceneObject>> objects, uint32_t max_tree_height, uint32_t min_leaf_size);
 
     void ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const SceneObject* &hit_object);
 };

@@ -25,7 +25,7 @@ void AabbBvh::Node::split(Axis axis) {
     const auto objects = std::get<Leaf>(child);
     std::ranges::sort(
         objects,
-        [axis](const SceneObject *a, const SceneObject *b) {
+        [axis](const auto &a, const auto &b) {
             // sort by aabb centerpoint coordinate
             return a->aabb.min.component(axis) + a->aabb.max.component(axis)
                  < b->aabb.min.component(axis) + b->aabb.max.component(axis);
@@ -81,7 +81,7 @@ void split_recursively(AabbBvh::Node &node, const uint32_t subtree_max_height, c
     split_recursively(*children[1], subtree_max_height - 1, min_leaf_size);
 }
 
-AabbBvh::AabbBvh(const std::span<const SceneObject*> objects, const uint32_t max_tree_height, const uint32_t min_leaf_size)
+AabbBvh::AabbBvh(const std::span<std::unique_ptr<SceneObject>> objects, const uint32_t max_tree_height, const uint32_t min_leaf_size)
   : objects(objects),
     root_node(std::make_unique<Node>(Node::Leaf(objects), wrap_aabb(objects))),
     traversal_stack(std::stack<TraversalRecord>())
@@ -89,10 +89,6 @@ AabbBvh::AabbBvh(const std::span<const SceneObject*> objects, const uint32_t max
     // TODO consider using a vec with pre-allocated memory for all the nodes
     // std::vector<Node> vec = new std::vector<Node>();
     split_recursively(*root_node, max_tree_height, min_leaf_size);
-}
-
-AabbBvh* AabbBvh::empty() {
-    return new AabbBvh(std::span<const SceneObject*>(), 0, 1);
 }
 
 AabbBvh::TraversalRecord::TraversalRecord(const Node &node) : node(node), second_pass(false) {}
@@ -114,12 +110,12 @@ void AabbBvh::ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal
         const Node &current_node = current_record.node;
         if (std::holds_alternative<Node::Leaf>(current_node.child)) {
             const auto objects = std::get<Node::Leaf>(current_node.child);
-            for (const SceneObject *obj : objects) {
-                if (!obj->intersects(ray))
+            for (auto &object : objects) {
+                if (!object->intersects(ray))
                     continue;
-                const bool outside_hit = obj->ray_cast_from_outside(ray, min_dist, pos, normal);
+                const bool outside_hit = object->ray_cast_from_outside(ray, min_dist, pos, normal);
                 if (outside_hit) {
-                    hit_object = obj;
+                    hit_object = object.get();
                 }
             }
             traversal_stack.pop();

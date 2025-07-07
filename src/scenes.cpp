@@ -26,10 +26,10 @@ static const auto completely_reflective_material = Material(0, -1, false, 1, Lig
 static const auto transparent_reflective_material = Material(.5, -1, true, 1.2, LightSpectrum::from_rgb(1, 1, 1, 1));
 
 void scenes::init_refraction_demo(Scene &scene, Matrix4x4 &projective_matrix) {
-    scene.add_object(new SphereObject(Vec3(0, 1000020, 0), 1000000, &white_material));
-    scene.add_object(new SphereObject(Vec3(-5, 0, 0), 4, &magenta_material));
-    scene.add_object(new SphereObject(Vec3(5, 0, 0), 4, &cyan_material));
-    scene.add_object(new SphereObject(Vec3(-2, -3, -7), 1.5, &transparent_reflective_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(0, 1000020, 0), 1000000, &white_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(-5, 0, 0), 4, &magenta_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(5, 0, 0), 4, &cyan_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(-2, -3, -7), 1.5, &transparent_reflective_material));
     projective_matrix = Matrix4x4(
         Matrix3x3::from_forward_down_vecs(
             Vec3(1, 2, 3).norm(),
@@ -40,10 +40,10 @@ void scenes::init_refraction_demo(Scene &scene, Matrix4x4 &projective_matrix) {
 }
 
 void scenes::init_translucency_demo(Scene &scene, Matrix4x4 &projective_matrix) {
-    scene.add_object(new SphereObject(Vec3(0, 1000020, 0), 1000000, &white_material));
-    scene.add_object(new SphereObject(Vec3(-5, 0, 0), 4, &yellow_material));
-    scene.add_object(new SphereObject(Vec3(5, 0, 0), 4, &red_material));
-    scene.add_object(new SphereObject(Vec3(-2, -3, -7), 1.5, &translucent_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(0, 1000020, 0), 1000000, &white_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(-5, 0, 0), 4, &yellow_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(5, 0, 0), 4, &red_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(-2, -3, -7), 1.5, &translucent_material));
     projective_matrix = Matrix4x4(
         Matrix3x3::from_forward_down_vecs(
             Vec3(1, 2, 3).norm(),
@@ -55,7 +55,7 @@ void scenes::init_translucency_demo(Scene &scene, Matrix4x4 &projective_matrix) 
 
 
 void scenes::init_colored_sphere_grid(Scene &scene, Matrix4x4 &projective_matrix) {
-    scene.add_object(new SphereObject(Vec3(0, 1000020, 0), 1000000, &white_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(0, 1000020, 0), 1000000, &white_material));
     constexpr int M = 3;
     for (int i = -M; i <= M; i++) {
         for (int j = -M; j <= M; j++) {
@@ -71,7 +71,7 @@ void scenes::init_colored_sphere_grid(Scene &scene, Matrix4x4 &projective_matrix
                 } else {
                     material = &yellow_material;
                 }
-                scene.add_object(new SphereObject(Vec3(i, j, k), .35, material));
+                scene.add_object(std::make_unique<SphereObject>(Vec3(i, j, k), .35, material));
             }
         }
     }
@@ -85,27 +85,27 @@ void scenes::init_colored_sphere_grid(Scene &scene, Matrix4x4 &projective_matrix
 }
 
 void scenes::init_glass_grid(Scene &scene, Matrix4x4 &projective_matrix) {
-    scene.add_object(new SphereObject(Vec3(0, 1000020, 0), 1000000, &white_material));
-    scene.add_object(new SphereObject(Vec3(0, 0, 10), 3, &cyan_material));
-    scene.add_object(new SphereObject(Vec3(1, 1, 5), .8, &transparent_reflective_material));
-    scene.add_object(new SphereObject(Vec3(1, -1, 5), .8, &transparent_reflective_material));
-    scene.add_object(new SphereObject(Vec3(-1, 1, 5), .8, &transparent_reflective_material));
-    scene.add_object(new SphereObject(Vec3(-1, -1, 5), .8, &transparent_reflective_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(0, 1000020, 0), 1000000, &white_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(0, 0, 10), 3, &cyan_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(1, 1, 5), .8, &transparent_reflective_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(1, -1, 5), .8, &transparent_reflective_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(-1, 1, 5), .8, &transparent_reflective_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(-1, -1, 5), .8, &transparent_reflective_material));
     constexpr int N = 5;
     for (int i = -N; i <= N; i++) {
         for (int j = -N; j <= N; j++) {
-            scene.add_object(new SphereObject(Vec3((i + j) * .22, (i -j) * .22, 3), .15, &glass_material));
+            scene.add_object(std::make_unique<SphereObject>(Vec3((i + j) * .22, (i -j) * .22, 3), .15, &glass_material));
         }
     }
     projective_matrix = Matrix4x4(Matrix3x3::IDENT, Vec3::ZERO);
 }
 
 void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
-    scene.add_object(new BoxObject(
-        {
-        {-1000000, 20, -1000000},
-        {1000000, 1000000, 1000000}
-        },
+    scene.add_object(std::make_unique<BoxObject>(
+        Aabb(
+            {-1000000, 20, -1000000},
+            {1000000, 1000000, 1000000}
+        ),
         &white_material)
     );
     constexpr int M = 1;
@@ -118,7 +118,7 @@ void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
                 } else {
                     material = &metal_material;
                 }
-                scene.add_object(new BoxObject({{i - .2, j - .2, k - .2}, {i + .2, j + .2, k + .2}}, material));
+                scene.add_object(std::make_unique<BoxObject>(Aabb({i - .2, j - .2, k - .2}, {i + .2, j + .2, k + .2}), material));
             }
         }
     }
@@ -132,12 +132,10 @@ void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
 }
 
 void scenes::init_glass_boxes(Scene &scene, Matrix4x4 &projective_matrix) {
-    scene.add_object(new BoxObject(
-        {{-1000000, 20, -1000000},{1000000, 1000000, 1000000}},
-        &white_material));
-    scene.add_object(new BoxObject({{-9, -4, -4}, {-1, 4, 4}}, &magenta_material));
-    scene.add_object(new BoxObject({{1, -4, -4}, {9, 4, 4}}, &cyan_material));
-    scene.add_object(new BoxObject({{-3.5, -4.5, -8.5}, {-.5, -1.5, -5.5}}, &translucent_material));
+    scene.add_object(std::make_unique<BoxObject>(Aabb({-1000000, 20, -1000000},{1000000, 1000000, 1000000}), &white_material));
+    scene.add_object(std::make_unique<BoxObject>(Aabb({-9, -4, -4}, {-1, 4, 4}), &magenta_material));
+    scene.add_object(std::make_unique<BoxObject>(Aabb({1, -4, -4}, {9, 4, 4}), &cyan_material));
+    scene.add_object(std::make_unique<BoxObject>(Aabb({-3.5, -4.5, -8.5}, {-.5, -1.5, -5.5}), &translucent_material));
     projective_matrix = Matrix4x4(
         Matrix3x3::from_forward_down_vecs(
             Vec3(1, 2, 3).norm(),
@@ -156,8 +154,8 @@ void scenes::init_pyramid_mesh(Scene &scene, Matrix4x4 &projective_matrix) {
         {-1, 1, -1}, {1, 1, 1}, {-1, 1, 1},
         {1, 1, 1}, {-1, 1, -1}, {1, 1, -1},
     };
-    scene.add_object(new MeshObject(std::move(tri_vertices), &translucent_material));
-    scene.add_object(new SphereObject(Vec3(0, 1000020, 0), 1000000, &white_material));
+    scene.add_object(std::make_unique<MeshObject>(std::move(tri_vertices), &translucent_material));
+    scene.add_object(std::make_unique<SphereObject>(Vec3(0, 1000020, 0), 1000000, &white_material));
     projective_matrix = Matrix4x4(
         Matrix3x3::from_forward_down_vecs(
             Vec3(1, 2, 3).norm(),
