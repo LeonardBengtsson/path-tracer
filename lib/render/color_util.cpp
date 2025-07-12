@@ -6,25 +6,26 @@
 
 namespace color_util {
     void unpack_rgba(const Rgba rgb, uint8_t out[4]) {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-        out[0] = static_cast<uint8_t>(rgb & 0xff);
-        out[1] = static_cast<uint8_t>((rgb >> 8) & 0xff);
-        out[2] = static_cast<uint8_t>((rgb >> 16) & 0xff);
-        out[3] = static_cast<uint8_t>((rgb >> 24) & 0xff);
-#else
-        out[0] = static_cast<uint8_t>((rgb >> 24) & 0xff);
-        out[1] = static_cast<uint8_t>((rgb >> 16) & 0xff);
-        out[2] = static_cast<uint8_t>((rgb >> 8) & 0xff);
-        out[3] = static_cast<uint8_t>(rgb & 0xff);
-#endif
+        if constexpr (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__) {
+            out[0] = static_cast<uint8_t>(rgb & 0xff);
+            out[1] = static_cast<uint8_t>((rgb >> 8) & 0xff);
+            out[2] = static_cast<uint8_t>((rgb >> 16) & 0xff);
+            out[3] = static_cast<uint8_t>((rgb >> 24) & 0xff);
+        } else {
+            out[0] = static_cast<uint8_t>((rgb >> 24) & 0xff);
+            out[1] = static_cast<uint8_t>((rgb >> 16) & 0xff);
+            out[2] = static_cast<uint8_t>((rgb >> 8) & 0xff);
+            out[3] = static_cast<uint8_t>(rgb & 0xff);
+        }
     }
 
     Rgba pack_rgba_i(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a) {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-        return r | (g << 8) | (b << 16) | (a << 24);
-#else
-        return (r << 24) | (g << 16) | (b << 8) | a;
-#endif
+        if constexpr (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__) {
+            return r | (g << 8) | (b << 16) | (a << 24);
+        }
+        else {
+            return (r << 24) | (g << 16) | (b << 8) | a;
+        }
     }
 
     Rgba pack_rgba_d(const double r, const double g, const double b, const double a) {

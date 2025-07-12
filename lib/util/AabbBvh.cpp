@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "aabb_util.h"
+#include "../config.h"
 #include "../scene/scene_objects/BoxObject.h"
 
 AabbBvh::Node::Node(Child child, Aabb aabb)
@@ -18,9 +19,8 @@ AabbBvh::Node::Node(Child child, Aabb aabb)
 void AabbBvh::Node::split(Axis axis) {
     // splits a leaf node into two leaf nodes, converting the current node to a branch node and assigning the new
     // leaves as children.
-#if DEBUG_ASSERTS
-    assert(std::holds_alternative<Leaf>(child));
-#endif
+    if constexpr (DEBUG_ASSERTS)
+        assert(std::holds_alternative<Leaf>(child));
 
     const auto objects = std::get<Leaf>(child);
     std::ranges::sort(
@@ -33,9 +33,8 @@ void AabbBvh::Node::split(Axis axis) {
     );
     const size_t object_count = objects.size();
 
-#if DEBUG_ASSERTS
-    assert(object_count >= 2);
-#endif
+    if constexpr (DEBUG_ASSERTS)
+        assert(object_count >= 2);
 
     const auto min_objects = objects.subspan(0, object_count / 2);
     const auto max_objects = objects.subspan(object_count / 2, object_count - object_count / 2);
@@ -48,9 +47,8 @@ void AabbBvh::Node::split(Axis axis) {
 }
 
 void split_recursively(AabbBvh::Node &node, const uint32_t subtree_max_height, const uint32_t min_leaf_size) {
-#if DEBUG_ASSERTS
-    assert(std::holds_alternative<AabbBvh::Node::Leaf>(node.child));
-#endif
+    if constexpr (DEBUG_ASSERTS)
+        assert(std::holds_alternative<AabbBvh::Node::Leaf>(node.child));
 
     if (subtree_max_height == 0)
         return;
@@ -72,9 +70,8 @@ void split_recursively(AabbBvh::Node &node, const uint32_t subtree_max_height, c
     }
     node.split(axis);
 
-#if DEBUG_ASSERTS
-    assert(std::holds_alternative<AabbBvh::Node::Branch>(node.child));
-#endif
+    if constexpr (DEBUG_ASSERTS)
+        assert(std::holds_alternative<AabbBvh::Node::Branch>(node.child));
 
     auto &[_, children] = std::get<AabbBvh::Node::Branch>(node.child);
     split_recursively(*children[0], subtree_max_height - 1, min_leaf_size);

@@ -14,9 +14,8 @@ MeshObject::MeshObject(const std::vector<Vec3> &&tri_vertices, const Material *m
   : SceneObject(wrap_aabb(std::span(tri_vertices)), material),
     tri_vertices(tri_vertices) {
 
-#if DEBUG_ASSERTS
-    assert(tri_vertices.size() % 3 == 0);
-#endif
+    if constexpr (DEBUG_ASSERTS)
+        assert(tri_vertices.size() % 3 == 0);
 }
 
 bool MeshObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal) const {

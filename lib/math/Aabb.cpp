@@ -13,9 +13,8 @@
 const Aabb Aabb::UNIT = {Vec3::ZERO, Vec3::ONE};
 
 Aabb::Aabb(const Vec3 &min, const Vec3 &max) : min(min), max(max) {
-#if DEBUG_ASSERTS
-    assert(min.x <= max.x && min.y <= max.y && min.z <= max.z);
-#endif
+    if constexpr (DEBUG_ASSERTS)
+        assert(min.x <= max.x && min.y <= max.y && min.z <= max.z);
 }
 
 bool Aabb::contains(const Vec3 &pos) const {

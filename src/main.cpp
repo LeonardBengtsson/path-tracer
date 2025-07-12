@@ -17,12 +17,12 @@ int main() {
     auto projective_matrix = Matrix4x4::IDENT;
     scenes::init_glass_grid(scene, projective_matrix);
 
-#if ENABLE_BVH_OPTIMIZATION
-    start_stopwatch();
-    scene.init();
-    std::string init_time_string = format_stopwatch();
-    std::cout << std::format("Initialized BVH in {}", init_time_string) << std::endl;
-#endif
+    if constexpr (ENABLE_BVH_OPTIMIZATION) {
+        start_stopwatch();
+        scene.init();
+        std::string init_time_string = format_stopwatch();
+        std::cout << std::format("Initialized BVH in {}", init_time_string) << std::endl;
+    }
 
     const auto buffer = new RenderBuffer(OUTPUT_WIDTH, OUTPUT_HEIGHT, SAMPLE_GRID_SIZE);
 

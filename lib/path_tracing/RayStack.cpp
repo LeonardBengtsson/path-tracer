@@ -14,10 +14,6 @@
 #include "../math/Vec2.h"
 #include "../config.h"
 
-#ifndef DEPTH_LIMIT
-#define DEPTH_LIMIT 5
-#endif
-
 RayStack::RayStack(const Matrix4x4 &projection_matrix)
   : projection_matrix(projection_matrix),
     solid_angle(0),

@@ -6,27 +6,27 @@
 #define CONFIG_H
 
 // OUTPUT QUALITY
-#define OUTPUT_WIDTH 1920
-#define OUTPUT_HEIGHT 1080
-#define SAMPLE_GRID_SIZE 1
+inline constexpr size_t OUTPUT_WIDTH = 1920;
+inline constexpr size_t OUTPUT_HEIGHT = 1080;
+inline constexpr size_t SAMPLE_GRID_SIZE = 1;
 
 // CAMERA SETTINGS
-#define V_FOV_DEGREES 60
+inline constexpr size_t V_FOV_DEGREES = 60;
 
 // PATH TRACING COMPLEXITY
-#define DEPTH_LIMIT 10
-#define MIN_LIGHT_FACTOR 0.01
-#define MAX_INTERNAL_BOUNCES 8
+inline constexpr size_t DEPTH_LIMIT = 10;
+inline constexpr double MIN_LIGHT_FACTOR = 0.01;
+inline constexpr size_t MAX_INTERNAL_REFLECTIONS = 8;
 
 // FEATURES
-#define ENABLE_POLARIZATION 0
-#define ENABLE_DISPERSION 0
+inline constexpr bool ENABLE_POLARIZATION = false;
+inline constexpr bool ENABLE_DISPERSION = false;
 
 // OPTIMIZATION
-#define ENABLE_BVH_OPTIMIZATION 1
+inline constexpr bool ENABLE_BVH_OPTIMIZATION = true;
 
 // DEBUG
-#define DEBUG_ASSERTS 1
-#define DEBUG_SHADE_NORMALS 0
+inline constexpr bool DEBUG_ASSERTS = true;
+inline constexpr bool DEBUG_SHADE_NORMALS = false;
 
 #endif //CONFIG_H
