@@ -7,7 +7,7 @@
 #include "../lib/scene/scene_objects/BoxObject.h"
 #include "../lib/scene/scene_objects/MeshObject.h"
 #include "../lib/scene/scene_objects/SphereObject.h"
-#include "../lib/util/mesh_util.h"
+#include "../lib/scene/scene_objects/mesh_util.h"
 
 static const auto white_material = Material(1, 0, false, 1, LightSpectrum::from_rgb(1, 1, 1, 1));
 static const auto red_material = Material(.9, -1, false, 1, LightSpectrum::from_rgb(1, 0, 0, 1));
@@ -167,7 +167,7 @@ void scenes::init_pyramid_mesh(Scene &scene, Matrix4x4 &projective_matrix) {
 }
 
 bool scenes::init_single_obj(Scene &scene, Matrix4x4 &projective_matrix, const std::string &obj_path) {
-    auto mesh = from_obj(obj_path, &glass_material);
+    auto mesh = mesh_util::from_obj(obj_path, &glass_material);
     if (!mesh.has_value())
         return false;
     scene.add_object(std::move(mesh.value()));

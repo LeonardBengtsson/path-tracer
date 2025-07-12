@@ -9,7 +9,7 @@
 #include <format>
 #include <utility>
 
-#include "aabb_util.h"
+#include "../math/aabb_util.h"
 #include "../config.h"
 #include "../scene/scene_objects/BoxObject.h"
 
@@ -39,8 +39,8 @@ void AabbBvh::Node::split(Axis axis) {
     const auto min_objects = objects.subspan(0, object_count / 2);
     const auto max_objects = objects.subspan(object_count / 2, object_count - object_count / 2);
 
-    auto min_child = std::make_unique<Node>(Leaf(min_objects), wrap_aabb(min_objects));
-    auto max_child = std::make_unique<Node>(Leaf(max_objects), wrap_aabb(max_objects));
+    auto min_child = std::make_unique<Node>(Leaf(min_objects), aabb_util::wrap_aabb(min_objects));
+    auto max_child = std::make_unique<Node>(Leaf(max_objects), aabb_util::wrap_aabb(max_objects));
 
     std::array<std::unique_ptr<Node>, 2> children = {std::move(min_child), std::move(max_child)};
     child.emplace<Branch>(axis, std::move(children));
@@ -80,7 +80,7 @@ void split_recursively(AabbBvh::Node &node, const uint32_t subtree_max_height, c
 
 AabbBvh::AabbBvh(const std::span<std::unique_ptr<SceneObject>> objects, const uint32_t max_tree_height, const uint32_t min_leaf_size)
   : objects(objects),
-    root_node(std::make_unique<Node>(Node::Leaf(objects), wrap_aabb(objects))),
+    root_node(std::make_unique<Node>(Node::Leaf(objects), aabb_util::wrap_aabb(objects))),
     traversal_stack(std::stack<TraversalRecord>())
 {
     // TODO consider using a vec with pre-allocated memory for all the nodes

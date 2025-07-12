@@ -7,11 +7,11 @@
 #include <format>
 #include <iostream>
 
-#include "../../util/aabb_util.h"
+#include "../../math/aabb_util.h"
 #include "../../config.h"
 
 MeshObject::MeshObject(const std::vector<Vec3> &&tri_vertices, const Material *material)
-  : SceneObject(wrap_aabb(std::span(tri_vertices)), material),
+  : SceneObject(aabb_util::wrap_aabb(std::span(tri_vertices)), material),
     tri_vertices(tri_vertices) {
 
     if constexpr (DEBUG_ASSERTS)

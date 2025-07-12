@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "../config.h"
-#include "../util/aabb_util.h"
+#include "../math/aabb_util.h"
 #include "scene_objects/SceneObject.h"
 
 Scene::Scene(const LightSpectrum &ambient_light) : aabb_bvh(nullptr), ambient_light(ambient_light) {}
@@ -19,7 +19,7 @@ void Scene::add_object(std::unique_ptr<SceneObject> &&object) {
 void Scene::init() {
     if constexpr (ENABLE_BVH_OPTIMIZATION) {
         uint32_t max_tree_height, min_leaf_size;
-        get_optimal_bvh_parameters(objects.size(), max_tree_height, min_leaf_size);
+        aabb_util::get_optimal_bvh_parameters(objects.size(), max_tree_height, min_leaf_size);
 
         aabb_bvh = new AabbBvh(std::span(objects), max_tree_height, min_leaf_size);
     }

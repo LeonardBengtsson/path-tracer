@@ -15,7 +15,6 @@ add_executable(path_tracer_2025
         lib/math/Ray.h
         lib/math/Matrix3x3.cpp
         lib/math/Matrix3x3.h
-        lib/math/math_util.cpp
         lib/math/math_util.h
         lib/math/Matrix4x4.cpp
         lib/math/Matrix4x4.h
@@ -31,7 +30,6 @@ add_executable(path_tracer_2025
         lib/scene/scene_objects/SceneObject.h
         lib/math/Aabb.cpp
         lib/math/Aabb.h
-        lib/render/color_util.cpp
         lib/render/color_util.h
         lib/path_tracing/LightTransformation.cpp
         lib/path_tracing/LightTransformation.h
@@ -47,10 +45,10 @@ add_executable(path_tracer_2025
         lib/util/AabbBvh.cpp
         lib/util/AabbBvh.h
         lib/util/Axis.h
-        lib/util/aabb_util.h
+        lib/math/aabb_util.h
         lib/util/string_util.h
         lib/util/time_util.h
         lib/scene/scene_objects/MeshObject.cpp
         lib/scene/scene_objects/MeshObject.h
-        lib/util/mesh_util.h
+        lib/scene/scene_objects/mesh_util.h
 )
