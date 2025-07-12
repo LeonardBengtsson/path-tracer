@@ -12,11 +12,8 @@
 #include "../render/color_util.h"
 
 RenderBuffer::RenderBuffer(const size_t size_x, const size_t size_y, const size_t sample_grid_size)
-  : size_x(size_x), size_y(size_y), sample_grid_size(sample_grid_size), buffer(new uint32_t[size_x * size_y]) {}
-
-RenderBuffer::~RenderBuffer() {
-    delete buffer;
-}
+  : size_x(size_x), size_y(size_y), sample_grid_size(sample_grid_size),
+    buffer(std::make_unique<color_util::Rgba[]>(size_x * size_y)) {}
 
 void RenderBuffer::render(const Scene &scene, const Matrix4x4 &projective_matrix, const double v_fov) const {
     auto ray_stack = RayStack(projective_matrix);
@@ -74,7 +71,7 @@ std::string RenderBuffer::write_png(const std::string &output_path) const {
         create_directories(path.parent_path());
     const std::string valid_path = get_valid_path(path);
 
-    stbi_write_png(valid_path.c_str(), size_x, size_y, 4, buffer, 0);
+    stbi_write_png(valid_path.c_str(), size_x, size_y, 4, buffer.get(), 0);
     return valid_path;
 }
 

@@ -14,12 +14,9 @@ class RenderBuffer {
 private:
     const size_t size_x, size_y;
     const size_t sample_grid_size;
-    color_util::Rgba *const buffer;
-
+    const std::unique_ptr<color_util::Rgba[]> buffer;
 public:
     RenderBuffer(size_t size_x, size_t size_y, size_t sample_grid_size = 1);
-
-    ~RenderBuffer();
 
     void render(const Scene &scene, const Matrix4x4 &projective_matrix, double v_fov) const;
 
