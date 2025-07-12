@@ -125,7 +125,7 @@ void MeshObject::ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &pos, V
         const double inv_det_A = 1 / det_A;
 
         const double t = Matrix3x3::det(o, w2, w3) * inv_det_A;
-        if (t < 0 || t >= dist)
+        if (t < 0.00001 || t >= dist)
             continue;
 
         const double b = Matrix3x3::det(ray.dir, o, w3) * inv_det_A;
