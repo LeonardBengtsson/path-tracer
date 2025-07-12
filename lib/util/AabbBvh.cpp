@@ -108,7 +108,7 @@ void AabbBvh::ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal
         if (std::holds_alternative<Node::Leaf>(current_node.child)) {
             const auto objects = std::get<Node::Leaf>(current_node.child);
             for (auto &object : objects) {
-                if (!object->intersects(ray))
+                if (!object->possibly_intersects(ray))
                     continue;
                 const bool outside_hit = object->ray_cast_from_outside(ray, min_dist, pos, normal);
                 if (outside_hit) {

@@ -8,7 +8,7 @@
 
 SceneObject::SceneObject(Aabb aabb, const Material *material) : aabb(std::move(aabb)), material(material) {}
 
-bool SceneObject::intersects(const Ray& ray) const {
+bool SceneObject::possibly_intersects(const Ray& ray) const {
     return aabb.intersects(ray);
 }
 

@@ -73,7 +73,7 @@ LightSpectrum Material::eval_path(const SceneObject* const object, RayStack* con
 
         // internal reflections
         double internal_dist = 0;
-        for (size_t bounces = 0; bounces < MAX_INTERNAL_REFLECTIONS && internal_factor > MIN_LIGHT_FACTOR; bounces++) {
+        for (size_t reflections = 0; reflections < MAX_INTERNAL_REFLECTIONS && internal_factor > MIN_LIGHT_FACTOR; reflections++) {
             double delta_dist;
             Vec3 internal_hit_pos = incident_ray.from;
             Vec3 internal_hit_normal = surface_normal;
@@ -88,7 +88,7 @@ LightSpectrum Material::eval_path(const SceneObject* const object, RayStack* con
             if (escape_factor > 0) {
                 const Ray escape_ray = {internal_hit_pos, escape_dir};
                 const double total_factor = internal_factor * escape_factor * (1 - roughness) * std::exp(internal_dist * minus_inv_attenuation_length);
-                ray_stack->push(escape_ray, LightTransformation::of_factor(total_factor), internal_dist, bounces + 1);
+                ray_stack->push(escape_ray, LightTransformation::of_factor(total_factor), internal_dist, reflections + 1);
             }
 
             internal_ray = {internal_hit_pos, math_util::reflect(internal_ray.dir, internal_hit_normal)};

@@ -38,7 +38,7 @@ void Scene::ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, 
         aabb_bvh->ray_cast(ray, min_dist, pos, normal, hit_object);
     } else {
         for (auto &object : objects) {
-            if (!object->intersects(ray))
+            if (!object->possibly_intersects(ray))
                 continue;
             const bool outside_hit = object->ray_cast_from_outside(ray, min_dist, pos, normal);
             if (outside_hit) {

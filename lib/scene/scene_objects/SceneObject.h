@@ -19,7 +19,7 @@ public:
 
     SceneObject(Aabb, const Material*);
 
-    bool intersects(const Ray &ray) const;
+    bool possibly_intersects(const Ray &ray) const;
 
     LightSpectrum eval_path(RayStack*, const Ray&, const Vec3&) const;
 
