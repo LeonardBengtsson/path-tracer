@@ -73,18 +73,19 @@ bool MeshObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &p
         const Vec3 w3 = v1 - v3;
 
         const double det_A = Matrix3x3::det(ray.dir, w2, w3);
-        if (det_A == 0)
+        if (abs(det_A) < 0.00001)
             continue;
+        const double inv_det_A = 1 / det_A;
 
-        const double t = Matrix3x3::det(o, w2, w3) / det_A;
+        const double t = Matrix3x3::det(o, w2, w3) * inv_det_A;
         if (t < 0 || t >= min_dist)
             continue;
 
-        const double b = Matrix3x3::det(ray.dir, o, w3) / det_A;
+        const double b = Matrix3x3::det(ray.dir, o, w3) * inv_det_A;
         if (b < 0 || b > 1)
             continue;
 
-        const double c = Matrix3x3::det(ray.dir, w2, o) / det_A;
+        const double c = Matrix3x3::det(ray.dir, w2, o) * inv_det_A;
         if (c < 0 || b + c > 1)
             continue;
 
