@@ -4,8 +4,8 @@
 
 #ifndef RAYSTACK_H
 #define RAYSTACK_H
-#include <cstdint>
-#include <vector>
+
+#include <stack>
 
 #include "LightTransformation.h"
 #include "../render/LightSpectrum.h"
@@ -30,7 +30,7 @@ private:
     const Matrix4x4 projection_matrix;
 
     double solid_angle;
-    std::vector<Node> stack;
+    std::stack<Node> stack;
 
     size_t current_depth;
     double current_distance;

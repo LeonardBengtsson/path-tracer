@@ -26,23 +26,24 @@ void RayStack::start(const double v_fov, const double aspect_ratio, const Vec2 u
     const Vec2 corner = {aspect_ratio * corner_y, corner_y};
     const Vec3 dir = {math_util::lerp(uv, -corner, corner), 1};
     solid_angle = 1 / dir.sq();
-    stack.emplace_back(projection_matrix.apply(Ray(Vec3::ZERO, dir.norm())), 0, 0, LightTransformation::IDENTITY);
+    stack.emplace(projection_matrix.apply(Ray(Vec3::ZERO, dir.norm())), 0, 0, LightTransformation::IDENTITY);
 }
 
 void RayStack::clear() {
-    stack.clear();
+    while (!stack.empty())
+        stack.pop();
 }
 
 void RayStack::push(const Ray &ray, const LightTransformation &light_transformation, const double delta_dist, const size_t additional_depth) {
     const size_t depth = current_depth + additional_depth;
     if (depth <= DEPTH_LIMIT)
-        stack.emplace_back(ray, depth, current_distance + delta_dist, current_transformation.combine(light_transformation));
+        stack.emplace(ray, depth, current_distance + delta_dist, current_transformation.combine(light_transformation));
 }
 
 LightSpectrum RayStack::trace(const Scene &scene) {
     auto result = LightSpectrum();
     while (!stack.empty()) {
-        const Node &node = stack.back();
+        const Node &node = stack.top();
 
         double distance_traveled = std::numeric_limits<double>::max();
         Vec3 hit_position = Vec3::ZERO;
@@ -51,14 +52,16 @@ LightSpectrum RayStack::trace(const Scene &scene) {
 
         scene.ray_cast(node.ray, distance_traveled, hit_position, hit_normal_unnormalized, hit_object);
         if (hit_object == nullptr) {
+            // none hit
             result.add_modified(scene.ambient_light, node.light_transformation);
-            stack.pop_back();
+            stack.pop();
             continue;
         }
 
         if (node.depth == DEPTH_LIMIT) {
-            result.add_modified(scene.ambient_light, node.light_transformation);
-            stack.pop_back();
+            // reached depth limit
+            // result.add_modified(scene.ambient_light, node.light_transformation);
+            stack.pop();
             continue;
         }
 
@@ -67,7 +70,7 @@ LightSpectrum RayStack::trace(const Scene &scene) {
         current_distance = node.distance + distance_traveled;
         current_transformation = node.light_transformation;
 
-        stack.pop_back();
+        stack.pop();
         const LightSpectrum emitted = hit_object->eval_path(this, incident_ray, hit_normal_unnormalized.norm());
         result.add_modified(emitted, current_transformation);
     }
