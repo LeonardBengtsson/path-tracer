@@ -38,10 +38,10 @@ namespace aabb_util {
         return {min, max};
     }
 
-    inline Aabb wrap_aabb(const Vec3 &v0, const Vec3 &v1, const Vec3 &v2) {
+    inline Aabb wrap_aabb(const Vec3 &v1, const Vec3 &v2, const Vec3 &v3) {
         return {
-        Vec3::min(Vec3::min(v0, v1), v2),
-        Vec3::max(Vec3::max(v0, v1), v2)
+        Vec3::min(Vec3::min(v1, v2), v3),
+        Vec3::max(Vec3::max(v1, v2), v3)
     };
     }
 

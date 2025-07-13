@@ -4,8 +4,10 @@
 
 #ifndef MATH_UTIL_H
 #define MATH_UTIL_H
+
 #include "Vec2.h"
 #include "Vec3.h"
+#include "Matrix3x3.h"
 
 namespace math_util {
     inline double signum(const double x) {
@@ -71,6 +73,64 @@ namespace math_util {
 
     inline Vec3 reflect(const Vec3 &v, const Vec3 &unit_axis) {
         return v - (unit_axis * (v * unit_axis) * 2);
+    }
+
+    inline double ray_triangle_intersect(const Vec3 &o, const Vec3 &w2, const Vec3 &w3, const Vec3 &ray_dir, const double dist) {
+        // returns the distance from the ray origin to the ray-triangle intersection, or -1 if the distance is larger
+        // than `dist` or if there is no intersection
+
+        // Möller-Trumbore algorithm
+        //
+        // assumes ray dir is unit length
+        //
+        // given ray origin (f), direction (d), and triangle vertices v₁, v₂, v₃:
+        // let o = v₁ - f, w₂ = v₁ - v₂, w₃ = v₁ - v₃
+        //
+        // solve for non-negative t:
+        // f + td = av₁ + bv₂ + cv₃
+        // where the left-hand side expresses the intersection point using barycentric coordinates,
+        // and a, b, c ≥ 0, a + b + c = 1
+        //
+        // f + td = av₁ + bv₂ + cv₃ ⇔
+        // f + td = (1 - b - c)v₁ + bv₂ + cv₃ ⇔
+        // f + td = v₁ + b(v₂ - v₁) + c(v₃ - v₁) ⇔
+        // td = v₁ - f - bw₂ - cw₃ ⇔
+        // td + bw₂ + cw₃ = o ⇔
+        // A [t b c] = o
+        // where A is the matrix
+        // [ |  |  | ]
+        // [ d  w₂ w₃]
+        // [ |  |  | ]
+        //
+        // if det(A) == 0 then the ray is parallel with plane; no intersection
+        //
+        // we solve the linear system with cramer's rule:
+        // t = det(A₁) / det(A)
+        // if t < 0 then no intersection
+        // b = det(A₂) / det(A)
+        // if b < 0 or b > 1 then no intersection
+        // c = det(A₃) / det(A)
+        // if c < 0 or c > 1 then no intersection
+        // return t
+
+        const double det_A = Matrix3x3::det(ray_dir, w2, w3);
+        if (abs(det_A) < 0.00001)
+            return -1;
+        const double inv_det_A = 1 / det_A;
+
+        const double t = Matrix3x3::det(o, w2, w3) * inv_det_A;
+        if (t < 0 || t >= dist)
+            return -1;
+
+        const double b = Matrix3x3::det(ray_dir, o, w3) * inv_det_A;
+        if (b < 0 || b > 1)
+            return -1;
+
+        const double c = Matrix3x3::det(ray_dir, w2, o) * inv_det_A;
+        if (c < 0 || b + c > 1)
+            return -1;
+
+        return t;
     }
 }
 
