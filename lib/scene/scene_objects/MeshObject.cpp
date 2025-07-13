@@ -9,6 +9,7 @@
 
 #include "../../math/aabb_util.h"
 #include "../../config.h"
+#include "../../math/math_util.h"
 
 MeshObject::MeshObject(const std::vector<Vec3> &&tri_vertices, const Material *material)
   : SceneObject(aabb_util::wrap_aabb(std::span(tri_vertices)), material),
@@ -35,58 +36,11 @@ bool MeshObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &p
             continue;
         }
 
-        // Möller-Trumbore algorithm
-        //
-        // assumes ray dir is unit length
-        //
-        // given ray origin (f), direction (d), and triangle vertices v₁, v₂, v₃:
-        // let o = v₁ - f, w₂ = v₁ - v₂, w₃ = v₁ - v₃
-        //
-        // solve for non-negative t:
-        // f + td = av₁ + bv₂ + cv₃
-        // where the left-hand side expresses the intersection point using barycentric coordinates,
-        // and a, b, c ≥ 0, a + b + c = 1
-        //
-        // f + td = av₁ + bv₂ + cv₃ ⇔
-        // f + td = (1 - b - c)v₁ + bv₂ + cv₃ ⇔
-        // f + td = v₁ + b(v₂ - v₁) + c(v₃ - v₁) ⇔
-        // td = v₁ - f - bw₂ - cw₃ ⇔
-        // td + bw₂ + cw₃ = o ⇔
-        // A [t b c] = o
-        // where A is the matrix
-        // [ |  |  | ]
-        // [ d  w₂ w₃]
-        // [ |  |  | ]
-        //
-        // if det(A) == 0 then the ray is parallel with plane; no intersection
-        //
-        // we solve the linear system with cramer's rule:
-        // t = det(A₁) / det(A)
-        // if t < 0 then no intersection
-        // b = det(A₂) / det(A)
-        // if b < 0 or b > 1 then no intersection
-        // c = det(A₃) / det(A)
-        // if c < 0 or c > 1 then no intersection
-        // return t
-
         const Vec3 w2 = v1 - v2;
         const Vec3 w3 = v1 - v3;
 
-        const double det_A = Matrix3x3::det(ray.dir, w2, w3);
-        if (abs(det_A) < 0.00001)
-            continue;
-        const double inv_det_A = 1 / det_A;
-
-        const double t = Matrix3x3::det(o, w2, w3) * inv_det_A;
-        if (t < 0 || t >= min_dist)
-            continue;
-
-        const double b = Matrix3x3::det(ray.dir, o, w3) * inv_det_A;
-        if (b < 0 || b > 1)
-            continue;
-
-        const double c = Matrix3x3::det(ray.dir, w2, o) * inv_det_A;
-        if (c < 0 || b + c > 1)
+        const double t = math_util::ray_triangle_intersect(o, w2, w3, ray.dir, min_dist);
+        if (t == -1)
             continue;
 
         min_dist = t;
@@ -119,21 +73,8 @@ void MeshObject::ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &pos, V
         const Vec3 w2 = v1 - v2;
         const Vec3 w3 = v1 - v3;
 
-        const double det_A = Matrix3x3::det(ray.dir, w2, w3);
-        if (abs(det_A) < 0.00001)
-            continue;
-        const double inv_det_A = 1 / det_A;
-
-        const double t = Matrix3x3::det(o, w2, w3) * inv_det_A;
-        if (t < 0.00001 || t >= dist)
-            continue;
-
-        const double b = Matrix3x3::det(ray.dir, o, w3) * inv_det_A;
-        if (b < 0 || b > 1)
-            continue;
-
-        const double c = Matrix3x3::det(ray.dir, w2, o) * inv_det_A;
-        if (c < 0 || b + c > 1)
+        const double t = math_util::ray_triangle_intersect(o, w2, w3, ray.dir, dist);
+        if (t == -1)
             continue;
 
         dist = t;
