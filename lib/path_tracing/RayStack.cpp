@@ -58,9 +58,8 @@ LightSpectrum RayStack::trace(const Scene &scene) {
             continue;
         }
 
-        if (node.depth == DEPTH_LIMIT) {
+        if (node.depth >= DEPTH_LIMIT) {
             // reached depth limit
-            // result.add_modified(scene.ambient_light, node.light_transformation);
             stack.pop();
             continue;
         }
