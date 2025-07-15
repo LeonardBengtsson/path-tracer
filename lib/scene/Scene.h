@@ -12,13 +12,16 @@
 #include "../render/LightSpectrum.h"
 #include "../util/AabbBvh.h"
 
-class SceneObject;
+
+Aabb wrap_aabb(std::span<std::unique_ptr<SceneObject>> objects);
+bool possibly_intersects(const std::unique_ptr<SceneObject> &object, const Ray &ray);
+bool ray_cast(const std::unique_ptr<SceneObject> &object, const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal);
 
 class Scene {
 private:
     std::vector<std::unique_ptr<SceneObject>> objects;
 
-    AabbBvh *aabb_bvh = nullptr;
+    std::unique_ptr<AabbBvh<std::unique_ptr<SceneObject>>> aabb_bvh = nullptr;
 public:
     const LightSpectrum ambient_light;
 
@@ -30,7 +33,7 @@ public:
 
     void iter_objects(void (*fn)(const std::unique_ptr<SceneObject>&)) const;
 
-    void ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const SceneObject* &hit_object) const;
+    void ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const std::unique_ptr<SceneObject> *&hit_object) const;
 };
 
 

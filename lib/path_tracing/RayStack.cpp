@@ -48,15 +48,16 @@ LightSpectrum RayStack::trace(const Scene &scene) {
         double distance_traveled = std::numeric_limits<double>::max();
         Vec3 hit_position = Vec3::ZERO;
         Vec3 hit_normal_unnormalized = Vec3::ZERO;
-        const SceneObject *hit_object = nullptr;
+        const std::unique_ptr<SceneObject> *hit_object_ref = nullptr;
 
-        scene.ray_cast(node.ray, distance_traveled, hit_position, hit_normal_unnormalized, hit_object);
-        if (hit_object == nullptr) {
+        scene.ray_cast(node.ray, distance_traveled, hit_position, hit_normal_unnormalized, hit_object_ref);
+        if (hit_object_ref == nullptr) {
             // none hit
             result.add_modified(scene.ambient_light, node.light_transformation);
             stack.pop();
             continue;
         }
+        const std::unique_ptr<SceneObject> &hit_object = *hit_object_ref;
 
         if (node.depth >= DEPTH_LIMIT) {
             // reached depth limit
