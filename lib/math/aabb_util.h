@@ -8,42 +8,20 @@
 #include <span>
 #include <cassert>
 #include <cmath>
+#include <memory>
 
 #include "Aabb.h"
 #include "../scene/scene_objects/SceneObject.h"
 
+
+class SceneObject;
+
 namespace aabb_util {
-    inline Aabb wrap_aabb(const std::span<const Vec3> points) {
-        if (points.empty())
-            return {Vec3::ZERO, Vec3::ZERO};
-        Vec3 min = Vec3::MAX;
-        Vec3 max = Vec3::MIN;
-        for (const Vec3 &point : points) {
-            min = Vec3::min(min, point);
-            max = Vec3::max(max, point);
-        }
-        return {min, max};
-    }
+    Aabb wrap_aabb(std::span<const Vec3> points);
 
-    inline Aabb wrap_aabb(const std::span<std::unique_ptr<SceneObject>> objects) {
-        if (objects.empty())
-            return {Vec3::ZERO, Vec3::ZERO};
-        Vec3 min = Vec3::MAX;
-        Vec3 max = Vec3::MIN;
-        for (const auto &o : objects) {
-            Aabb aabb = o->aabb;
-            min = Vec3::min(min, aabb.min);
-            max = Vec3::max(max, aabb.max);
-        }
-        return {min, max};
-    }
+    Aabb wrap_aabb(std::span<std::unique_ptr<SceneObject>> objects);
 
-    inline Aabb wrap_aabb(const Vec3 &v1, const Vec3 &v2, const Vec3 &v3) {
-        return {
-        Vec3::min(Vec3::min(v1, v2), v3),
-        Vec3::max(Vec3::max(v1, v2), v3)
-    };
-    }
+    Aabb wrap_aabb(const Vec3 &v1, const Vec3 &v2, const Vec3 &v3);
 
     inline void get_optimal_bvh_parameters(const size_t size, uint32_t &max_tree_height, uint32_t &min_leaf_size) {
         min_leaf_size = 2;

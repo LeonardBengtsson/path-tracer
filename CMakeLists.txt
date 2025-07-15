@@ -42,13 +42,15 @@ add_executable(path_tracer_2025
         lib/scene/scene_objects/BoxObject.cpp
         lib/scene/scene_objects/BoxObject.h
         lib/config.h
-        lib/util/AabbBvh.cpp
+        lib/util/AabbBvh.tpp
         lib/util/AabbBvh.h
         lib/util/Axis.h
+        lib/math/aabb_util.cpp
         lib/math/aabb_util.h
         lib/util/string_util.h
         lib/util/time_util.h
         lib/scene/scene_objects/MeshObject.cpp
         lib/scene/scene_objects/MeshObject.h
         lib/scene/scene_objects/mesh_util.h
+        lib/scene/aabbbvh_impl.cpp
 )

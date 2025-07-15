@@ -15,10 +15,21 @@
 class SceneObject;
 
 class Scene {
+public:
+    struct SceneObjectOps {
+        static Aabb get_aabb(const std::unique_ptr<SceneObject> &object);
+        static Aabb wrap_aabb(std::span<std::unique_ptr<SceneObject>> objects);
+        static bool possibly_intersects(const std::unique_ptr<SceneObject> &object, const Ray &ray);
+        static bool ray_cast(const std::unique_ptr<SceneObject> &object, const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal);
+    };
+
 private:
+    using SceneObjectAabbBvh = AabbBvh<std::unique_ptr<SceneObject>, SceneObjectOps>;
+
     std::vector<std::unique_ptr<SceneObject>> objects;
 
-    AabbBvh *aabb_bvh = nullptr;
+    std::unique_ptr<SceneObjectAabbBvh> aabb_bvh = nullptr;
+
 public:
     const LightSpectrum ambient_light;
 
@@ -30,7 +41,7 @@ public:
 
     void iter_objects(void (*fn)(const std::unique_ptr<SceneObject>&)) const;
 
-    void ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const SceneObject* &hit_object) const;
+    void ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const std::unique_ptr<SceneObject>* &hit_object) const;
 };
 
 

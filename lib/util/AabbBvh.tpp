@@ -2,6 +2,9 @@
 // Created by Leonard on 2025-02-06.
 //
 
+#ifndef AABBBVH_TPP
+#define AABBBVH_TPP
+
 #include "AabbBvh.h"
 
 #include <algorithm>
@@ -13,10 +16,12 @@
 #include "../config.h"
 #include "../scene/scene_objects/BoxObject.h"
 
-AabbBvh::Node::Node(Child child, Aabb aabb)
+template<typename T, AabbBvhOps<T> Ops>
+AabbBvh<T, Ops>::Node::Node(Child child, Aabb aabb)
   : child(std::move(child)), aabb(std::move(aabb)) {}
 
-void AabbBvh::Node::split(Axis axis) {
+template<typename T, AabbBvhOps<T> Ops>
+void AabbBvh<T, Ops>::Node::split(Axis axis) {
     // splits a leaf node into two leaf nodes, converting the current node to a branch node and assigning the new
     // leaves as children.
     if constexpr (DEBUG_ASSERTS)
@@ -25,10 +30,12 @@ void AabbBvh::Node::split(Axis axis) {
     const auto objects = std::get<Leaf>(child);
     std::ranges::sort(
         objects,
-        [axis](const auto &a, const auto &b) {
+        [this, axis](const T &a, const T &b) {
+            const Aabb a_aabb = Ops::get_aabb(a);
+            const Aabb b_aabb = Ops::get_aabb(b);
             // sort by aabb centerpoint coordinate
-            return a->aabb.min.component(axis) + a->aabb.max.component(axis)
-                 < b->aabb.min.component(axis) + b->aabb.max.component(axis);
+            return a_aabb.min.component(axis) + a_aabb.max.component(axis)
+                 < b_aabb.min.component(axis) + b_aabb.max.component(axis);
         }
     );
     const size_t object_count = objects.size();
@@ -39,20 +46,24 @@ void AabbBvh::Node::split(Axis axis) {
     const auto min_objects = objects.subspan(0, object_count / 2);
     const auto max_objects = objects.subspan(object_count / 2, object_count - object_count / 2);
 
-    auto min_child = std::make_unique<Node>(Leaf(min_objects), aabb_util::wrap_aabb(min_objects));
-    auto max_child = std::make_unique<Node>(Leaf(max_objects), aabb_util::wrap_aabb(max_objects));
+    auto min_child = std::make_unique<Node>(Leaf(min_objects), Ops::wrap_aabb(min_objects));
+    auto max_child = std::make_unique<Node>(Leaf(max_objects), Ops::wrap_aabb(max_objects));
 
     std::array<std::unique_ptr<Node>, 2> children = {std::move(min_child), std::move(max_child)};
-    child.emplace<Branch>(axis, std::move(children));
+    child.template emplace<Branch>(axis, std::move(children));
 }
 
-void split_recursively(AabbBvh::Node &node, const uint32_t subtree_max_height, const uint32_t min_leaf_size) {
+template<typename T, AabbBvhOps<T> Ops>
+void split_recursively(typename AabbBvh<T, Ops>::Node &node, const uint32_t subtree_max_height, const uint32_t min_leaf_size) {
+    using Leaf = typename AabbBvh<T, Ops>::Node::Leaf;
+    using Branch = typename AabbBvh<T, Ops>::Node::Branch;
+
     if constexpr (DEBUG_ASSERTS)
-        assert(std::holds_alternative<AabbBvh::Node::Leaf>(node.child));
+        assert(std::holds_alternative<Leaf>(node.child));
 
     if (subtree_max_height == 0)
         return;
-    if (std::get<AabbBvh::Node::Leaf>(node.child).size() <= min_leaf_size)
+    if (std::get<Leaf>(node.child).size() <= min_leaf_size)
         return;
 
     // TODO more efficient axis selection
@@ -71,26 +82,29 @@ void split_recursively(AabbBvh::Node &node, const uint32_t subtree_max_height, c
     node.split(axis);
 
     if constexpr (DEBUG_ASSERTS)
-        assert(std::holds_alternative<AabbBvh::Node::Branch>(node.child));
+        assert(std::holds_alternative<Branch>(node.child));
 
-    auto &[_, children] = std::get<AabbBvh::Node::Branch>(node.child);
-    split_recursively(*children[0], subtree_max_height - 1, min_leaf_size);
-    split_recursively(*children[1], subtree_max_height - 1, min_leaf_size);
+    auto &[_, children] = std::get<Branch>(node.child);
+    split_recursively<T, Ops>(*children[0], subtree_max_height - 1, min_leaf_size);
+    split_recursively<T, Ops>(*children[1], subtree_max_height - 1, min_leaf_size);
 }
 
-AabbBvh::AabbBvh(const std::span<std::unique_ptr<SceneObject>> objects, const uint32_t max_tree_height, const uint32_t min_leaf_size)
+template<typename T, AabbBvhOps<T> Ops>
+AabbBvh<T, Ops>::AabbBvh(const std::span<T> objects, const uint32_t max_tree_height, const uint32_t min_leaf_size)
   : objects(objects),
-    root_node(std::make_unique<Node>(Node::Leaf(objects), aabb_util::wrap_aabb(objects))),
+    root_node(std::make_unique<Node>(typename Node::Leaf(objects), Ops::wrap_aabb(objects))),
     traversal_stack(std::stack<TraversalRecord>())
 {
     // TODO consider using a vec with pre-allocated memory for all the nodes
     // std::vector<Node> vec = new std::vector<Node>();
-    split_recursively(*root_node, max_tree_height, min_leaf_size);
+    split_recursively<T, Ops>(*root_node, max_tree_height, min_leaf_size);
 }
 
-AabbBvh::TraversalRecord::TraversalRecord(const Node &node) : node(node), second_pass(false) {}
+template<typename T, AabbBvhOps<T> Ops>
+AabbBvh<T, Ops>::TraversalRecord::TraversalRecord(const Node &node) : node(node), second_pass(false) {}
 
-void AabbBvh::ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const SceneObject* &hit_object) {
+template<typename T, AabbBvhOps<T> Ops>
+void AabbBvh<T, Ops>::ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal, const T *&hit_object) {
     while (!traversal_stack.empty())
         traversal_stack.pop();
 
@@ -105,19 +119,19 @@ void AabbBvh::ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal
     while (!traversal_stack.empty()) {
         TraversalRecord &current_record = traversal_stack.top();
         const Node &current_node = current_record.node;
-        if (std::holds_alternative<Node::Leaf>(current_node.child)) {
-            const auto objects = std::get<Node::Leaf>(current_node.child);
+        if (std::holds_alternative<typename Node::Leaf>(current_node.child)) {
+            const auto objects = std::get<typename Node::Leaf>(current_node.child);
             for (auto &object : objects) {
-                if (!object->possibly_intersects(ray))
+                if (!Ops::possibly_intersects(object, ray))
                     continue;
-                const bool outside_hit = object->ray_cast_from_outside(ray, min_dist, pos, normal);
+                const bool outside_hit = Ops::ray_cast(object, ray, min_dist, pos, normal);
                 if (outside_hit) {
-                    hit_object = object.get();
+                    hit_object = &object;
                 }
             }
             traversal_stack.pop();
         } else {
-            const auto &[axis, children] = std::get<Node::Branch>(current_node.child);
+            const auto &[axis, children] = std::get<typename Node::Branch>(current_node.child);
             size_t next_node_index = dir_indices[axis];
 
             if (current_record.second_pass)
@@ -139,3 +153,7 @@ void AabbBvh::ray_cast(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal
         }
     }
 }
+
+
+
+#endif //AABBBVH_TPP
