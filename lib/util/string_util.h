@@ -7,6 +7,8 @@
 
 #include <format>
 
+
+
 namespace string_util {
     inline std::string format_duration(const uint64_t micros) {
         if (micros > 86400000000) {
@@ -42,5 +44,7 @@ namespace string_util {
         return complete_path;
     }
 }
+
+
 
 #endif //STRING_UTIL_H

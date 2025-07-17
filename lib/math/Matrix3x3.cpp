@@ -6,13 +6,21 @@
 
 #include <format>
 
-const Matrix3x3 Matrix3x3::IDENT = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+
+
+const Matrix3x3 Matrix3x3::IDENT = Matrix3x3();
+
+Matrix3x3::Matrix3x3()
+  : e11(1), e12(0), e13(0),
+    e21(0), e22(1), e23(0),
+    e31(0), e32(0), e33(1) {}
 
 Matrix3x3::Matrix3x3(
     const double e11, const double e12, const double e13,
     const double e21, const double e22, const double e23,
     const double e31, const double e32, const double e33
-) : e11(e11), e12(e12), e13(e13),
+)
+  : e11(e11), e12(e12), e13(e13),
     e21(e21), e22(e22), e23(e23),
     e31(e31), e32(e32), e33(e33) {}
 

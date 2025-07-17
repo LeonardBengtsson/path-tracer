@@ -8,10 +8,13 @@
 
 #include "../../math/math_util.h"
 
+
+
 BoxObject::BoxObject(const Aabb &box, const Material *material)
   : SceneObject(box, material) {}
 
 bool BoxObject::ray_cast_from_outside(const Ray& ray, double& min_dist, Vec3& pos, Vec3& normal) const {
+    // same algorithm as described in Aabb::ray_length
     double tx0 = (aabb.min.x - ray.from.x) / ray.dir.x;
     double tx1 = (aabb.max.x - ray.from.x) / ray.dir.x;
     if (tx0 > tx1)
@@ -39,6 +42,7 @@ bool BoxObject::ray_cast_from_outside(const Ray& ray, double& min_dist, Vec3& po
 
     min_dist = t;
     pos = ray.from + ray.dir * t;
+    // determine normal vector based on which side intersection was closest
     if (t == tx0) {
         normal = {math_util::minus_signum(ray.dir.x), 0, 0};
     } else if (t == ty0) {
@@ -50,12 +54,17 @@ bool BoxObject::ray_cast_from_outside(const Ray& ray, double& min_dist, Vec3& po
 }
 
 void BoxObject::ray_cast_from_inside(const Ray& ray, double& dist, Vec3& pos, Vec3& normal) const {
+    // which box corner is closest to where the ray will intersect
     const Vec3 corner = {
         ray.dir.x > 0 ? aabb.max.x : aabb.min.x,
         ray.dir.y > 0 ? aabb.max.y : aabb.min.y,
         ray.dir.z > 0 ? aabb.max.z : aabb.min.z
     };
-    const Vec3 t = (corner - ray.from) / ray.dir;
+    // the distance from the ray origin to its intersection with each respective plane
+    // corner_i - origin_i < 0 if and only if dir_i < 0, so t_i > 0
+    // if dir_i == 0, then t_i = std::numeric_limits<double>::infinity()
+    const Vec3 t = math_util::safe_divide(corner - ray.from, ray.dir);
+    // determine the nearest plane
     if (t.x < t.y && t.x < t.z) {
         dist = t.x;
         pos = ray.from + ray.dir * t.x;

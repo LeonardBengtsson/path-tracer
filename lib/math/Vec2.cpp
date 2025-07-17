@@ -3,12 +3,15 @@
 //
 
 #include "Vec2.h"
+
 #include <cmath>
 #include <format>
 #include <string>
 
+
+
 const Vec2 Vec2::ZERO = {0, 0};
-const Vec2 Vec2::ONE = {1,  1};
+const Vec2 Vec2::ONE = {1, 1};
 const Vec2 Vec2::X = {1, 0};
 const Vec2 Vec2::Y = {0, 1};
 

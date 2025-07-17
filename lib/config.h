@@ -5,13 +5,15 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+
+
 //////// OUTPUT QUALITY ////////
 
 inline constexpr size_t OUTPUT_WIDTH = 1920;
 
 inline constexpr size_t OUTPUT_HEIGHT = 1080;
 
-// the square of this number of samples are taken per pixel
+// the size of the square grid of samples taken per pixel
 inline constexpr size_t SAMPLE_GRID_SIZE = 1;
 
 
@@ -25,14 +27,23 @@ inline constexpr size_t V_FOV_DEGREES = 60;
 
 //////// PATH TRACING COMPLEXITY ////////
 
-// limits the recursion depth of a single light ray
+// limits how deep (the amount of surface interactions) the path tracing
+// algorithm will search for light sources for a single ray
 inline constexpr size_t DEPTH_LIMIT = 10;
 
 // discard light rays that contribute less than this factor to a single sample
-inline constexpr double MIN_LIGHT_FACTOR = 0.01;
+inline constexpr double MIN_RAY_CONTRIBUTION = 0.01;
 
-// limits the depth of reflections that are evaluated within an object
+// limits the depth of reflections that are evaluated within an object.
+// effectively limited by DEPTH_LIMIT.
 inline constexpr size_t MAX_INTERNAL_REFLECTIONS = 8;
+
+// determines the max value with which an asserted value may deviate
+inline constexpr double TOLERANCE = 0.00001;
+
+// enable using Schlick's approximation for calculating refraction
+// (see https://en.wikipedia.org/wiki/Schlick%27s_approximation)
+inline constexpr bool ENABLE_SCHLICKS_APPROXIMATION = true;
 
 
 
@@ -48,7 +59,8 @@ inline constexpr bool ENABLE_DISPERSION = false;
 
 //////// OPTIMIZATION ////////
 
-// enable an optimization that partitions the scene objects into a tree structure to accelerate ray intersection tests
+// enable an optimization that partitions the scene objects into a tree
+// structure to accelerate ray intersection tests
 inline constexpr bool ENABLE_BVH_OPTIMIZATION = true;
 
 
@@ -60,5 +72,7 @@ inline constexpr bool DEBUG_ASSERTS = true;
 
 // color all pixels with the normal direction of the hit surface
 inline constexpr bool DEBUG_SHADE_NORMALS = false;
+
+
 
 #endif //CONFIG_H

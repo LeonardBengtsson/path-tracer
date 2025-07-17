@@ -12,6 +12,8 @@
 #include "../render/color_util.h"
 #include "../util/string_util.h"
 
+
+
 RenderBuffer::RenderBuffer(const size_t size_x, const size_t size_y, const size_t sample_grid_size)
   : size_x(size_x), size_y(size_y), sample_grid_size(sample_grid_size),
     buffer(std::make_unique<color_util::Rgba[]>(size_x * size_y)) {}
@@ -34,7 +36,7 @@ void RenderBuffer::render(const Scene &scene, const Matrix4x4 &projective_matrix
                 for (size_t n = 0; n < sample_grid_size; n++) {
                     const double u = pixel_u + m * sample_u_offset;
                     const double v = pixel_v + n * sample_v_offset;
-                    ray_stack.start(v_fov, static_cast<double>(size_x) / static_cast<double>(size_y), {u, v});
+                    ray_stack.init(v_fov, static_cast<double>(size_x) / static_cast<double>(size_y), {u, v});
                     LightSpectrum light = ray_stack.trace(scene);
                     incoming_light.add_modified(light, LightTransformation::IDENTITY, sample_factor);
                 }
@@ -56,6 +58,7 @@ std::string RenderBuffer::write_png(const std::string &output_path) const {
         create_directories(path.parent_path());
     const std::string valid_path = string_util::get_valid_path(path);
 
+    // use external library
     stbi_write_png(valid_path.c_str(), size_x, size_y, 4, buffer.get(), 0);
     return valid_path;
 }

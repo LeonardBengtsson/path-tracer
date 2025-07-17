@@ -5,9 +5,16 @@
 #ifndef MATH_UTIL_H
 #define MATH_UTIL_H
 
+#include <cassert>
+#include <limits>
+
 #include "Vec2.h"
 #include "Vec3.h"
 #include "Matrix3x3.h"
+#include "../util/debug_util.h"
+#include "../config.h"
+
+
 
 namespace math_util {
     inline double signum(const double x) {
@@ -53,6 +60,8 @@ namespace math_util {
     }
 
     inline double map(const double l, const double a1, const double b1, const double a2, const double b2) {
+        if constexpr (DEBUG_ASSERTS)
+            assert(a1 != b1);
         return lerp((l - a1) / (b1 - a1), a2, b2);
     }
 
@@ -71,25 +80,68 @@ namespace math_util {
         };
     }
 
-    inline Vec3 reflect(const Vec3 &v, const Vec3 &unit_axis) {
-        return v - (unit_axis * (v * unit_axis) * 2);
+    inline double safe_divide(const double a, const double b) {
+        if constexpr (std::numeric_limits<double>::is_iec559) {
+            return a / b;
+        } else {
+            if (b == 0)
+                if (a > 0)
+                    return std::numeric_limits<double>::infinity();
+                else if (a < 0)
+                    return -std::numeric_limits<double>::infinity();
+                else
+                    return 0;
+            else
+                return a / b;
+        }
     }
 
-    inline double ray_triangle_intersect(const Vec3 &o, const Vec3 &w2, const Vec3 &w3, const Vec3 &ray_dir, const double dist) {
-        // returns the distance from the ray origin to the ray-triangle intersection, or -1 if the distance is larger
-        // than `dist` or if there is no intersection
+    inline Vec3 safe_divide(const Vec3 &a, const Vec3 &b) {
+        return {
+            safe_divide(a.x, b.x),
+            safe_divide(a.y, b.y),
+            safe_divide(a.z, b.z)
+        };
+    }
+
+    inline Vec3 reflect(const Vec3 &dir, const Vec3 &unit_axis) {
+        if constexpr (DEBUG_ASSERTS)
+            debug_util::assert_unit(unit_axis);
+        return dir - (unit_axis * (dir * unit_axis) * 2);
+    }
+
+    inline bool almost_zero(const double x) {
+        return std::abs(x) <= TOLERANCE;
+    }
+
+    /**
+     * Determines ray-triangle intersections using the Möller-Trumbore algorithm (see
+     * <a href="https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm">
+     * Möller–Trumbore intersection algorithm - Wikipedia
+     * </a>).
+     *
+     * Given ray origin f, direction d, and triangle vertices v₁, v₂, v₃:
+     * @param o = v₁ - f
+     * @param w2 = v₁ - v₂
+     * @param w3 = v₁ - v₃
+     * @param ray_dir The ray's direction unit vector.
+     * @param dist The maximum distance to be considered. Any intersections further than this is ignored.
+     * @return The distance from the ray origin to the ray-triangle intersection, or @c -1 if the distance is larger
+     * than @c dist or if there is no intersection.
+     */
+    inline double ray_triangle_intersect(const Vec3 &o, const Vec3 &w2, const Vec3 &w3, const Vec3 &ray_dir,
+        const double dist)
+    {
+        if constexpr (DEBUG_ASSERTS)
+            debug_util::assert_unit(ray_dir);
 
         // Möller-Trumbore algorithm
-        //
-        // assumes ray dir is unit length
-        //
-        // given ray origin (f), direction (d), and triangle vertices v₁, v₂, v₃:
-        // let o = v₁ - f, w₂ = v₁ - v₂, w₃ = v₁ - v₃
+        // (see https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm)
         //
         // solve for non-negative t:
         // f + td = av₁ + bv₂ + cv₃
-        // where the left-hand side expresses the intersection point using barycentric coordinates,
-        // and a, b, c ≥ 0, a + b + c = 1
+        // where the left-hand side expresses the intersection point using
+        // barycentric coordinates, and a, b, c ≥ 0, a + b + c = 1
         //
         // f + td = av₁ + bv₂ + cv₃ ⇔
         // f + td = (1 - b - c)v₁ + bv₂ + cv₃ ⇔
@@ -114,12 +166,12 @@ namespace math_util {
         // return t
 
         const double det_A = Matrix3x3::det(ray_dir, w2, w3);
-        if (abs(det_A) < 0.00001)
+        if (almost_zero(det_A))
             return -1;
         const double inv_det_A = 1 / det_A;
 
         const double t = Matrix3x3::det(o, w2, w3) * inv_det_A;
-        if (t < 0.00001 || t >= dist)
+        if (t < TOLERANCE || t >= dist)
             return -1;
 
         const double b = Matrix3x3::det(ray_dir, o, w3) * inv_det_A;
@@ -133,5 +185,7 @@ namespace math_util {
         return t;
     }
 }
+
+
 
 #endif //MATH_UTIL_H

@@ -10,17 +10,19 @@
 #include "../../math/math_util.h"
 #include "../../config.h"
 
-SphereObject::SphereObject(const Vec3 &center, const double radius, const Material* const material)
-  : SceneObject({center - radius, center + radius}, material),
-    center(center),
-    radius(radius)
+
+
+SphereObject::SphereObject(const Vec3 &center, const double radius, const Material *const material)
+  : SceneObject({center - radius, center + radius}, material), center(center), radius(radius)
 {
-#ifdef DEBUG_ASSERTS
-    assert(radius >= 0);
-#endif
+    if constexpr (DEBUG_ASSERTS)
+        assert(radius >= 0);
 }
 
 bool SphereObject::ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal) const {
+    if constexpr (DEBUG_ASSERTS)
+        assert((pos - center).sq() >= radius*radius);
+
     // assumes ray dir is unit length, and ray origin is not inside sphere
     //
     // given ray origin (f), direction (d), sphere center (c), radius (r):

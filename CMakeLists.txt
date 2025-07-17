@@ -53,4 +53,6 @@ add_executable(path_tracer_2025
         lib/scene/scene_objects/MeshObject.h
         lib/scene/scene_objects/mesh_util.h
         lib/scene/aabbbvh_impl.cpp
+        lib/util/debug_util.cpp
+        lib/util/debug_util.h
 )

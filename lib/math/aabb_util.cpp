@@ -4,6 +4,8 @@
 
 #include "aabb_util.h"
 
+
+
 Aabb aabb_util::wrap_aabb(const std::span<const Vec3> points) {
     if (points.empty())
         return {Vec3::ZERO, Vec3::ZERO};
@@ -16,7 +18,9 @@ Aabb aabb_util::wrap_aabb(const std::span<const Vec3> points) {
     return {min, max};
 }
 
-Aabb aabb_util::wrap_aabb(const std::span<std::unique_ptr<SceneObject>> objects) {
+Aabb aabb_util::wrap_aabb(
+    const std::span<std::unique_ptr<SceneObject>> objects)
+{
     if (objects.empty())
         return {Vec3::ZERO, Vec3::ZERO};
     Vec3 min = Vec3::MAX;

@@ -3,9 +3,12 @@
 //
 
 #include "Vec3.h"
+
 #include <cmath>
 #include <format>
 #include <bits/max_size_type.h>
+
+
 
 const Vec3 Vec3::ZERO = {0, 0, 0};
 const Vec3 Vec3::ONE = {1, 1, 1};
@@ -17,8 +20,8 @@ const Vec3 Vec3::MAX = {std::numeric_limits<double>::max()};
 
 Vec3::Vec3(const Vec3 &v) = default;
 Vec3::Vec3(const double x, const double y, const double z) : x(x), y(y), z(z) {}
-Vec3::Vec3(const Vec2 xy, const double z) : x(xy.x), y(xy.y), z(z) {}
-Vec3::Vec3(const double x, const Vec2 yz) : x(x), y(yz.x), z(yz.y) {}
+Vec3::Vec3(const Vec2 &xy, const double z) : x(xy.x), y(xy.y), z(z) {}
+Vec3::Vec3(const double x, const Vec2 &yz) : x(x), y(yz.x), z(yz.y) {}
 Vec3::Vec3(const double xyz) : x(xyz), y(xyz), z(xyz) {}
 
 Vec3 Vec3::operator+(const Vec3 &v) const {
@@ -59,7 +62,7 @@ double Vec3::operator*(const Vec3 &v) const {
     return x * v.x + y * v.y + z * v.z;
 }
 
-double Vec3::component(const Axis axis) const {
+double Vec3::scalar_component(const Axis axis) const {
     switch (axis) {
     case Axis::X:
         return x;
@@ -69,7 +72,6 @@ double Vec3::component(const Axis axis) const {
         return z;
     }
 }
-
 
 double Vec3::sq() const {
     return x*x + y*y + z*z;
@@ -97,5 +99,8 @@ Vec3 Vec3::max(const Vec3 &v, const Vec3 &w) {
 }
 
 Vec3 Vec3::cross(const Vec3 &v, const Vec3 &w) {
-    return {v.y * w.z - v.z * w.y, v.z * w.x - v.x * w.z, v.x * w.y - v.y * w.x};
+    return {
+        v.y * w.z - v.z * w.y,
+        v.z * w.x - v.x * w.z,
+        v.x * w.y - v.y * w.x};
 }

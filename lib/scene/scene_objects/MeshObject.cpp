@@ -11,10 +11,11 @@
 #include "../../config.h"
 #include "../../math/math_util.h"
 
-MeshObject::MeshObject(const std::vector<Vec3> &&tri_vertices, const Material *material)
-  : SceneObject(aabb_util::wrap_aabb(std::span(tri_vertices)), material),
-    tri_vertices(tri_vertices) {
 
+
+MeshObject::MeshObject(std::vector<Vec3> &&tri_vertices, const Material *material)
+  : SceneObject(aabb_util::wrap_aabb(std::span(tri_vertices)), material), tri_vertices(std::move(tri_vertices))
+{
     if constexpr (DEBUG_ASSERTS)
         assert(tri_vertices.size() % 3 == 0);
 }
@@ -85,4 +86,3 @@ void MeshObject::ray_cast_from_inside(const Ray &ray, double &dist, Vec3 &pos, V
     }
     normal = normal.norm();
 }
-

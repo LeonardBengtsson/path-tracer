@@ -4,8 +4,10 @@
 
 #ifndef BOXOBJECT_H
 #define BOXOBJECT_H
+
 #include "SceneObject.h"
 #include "../../math/Aabb.h"
+
 
 
 class BoxObject final : public SceneObject {

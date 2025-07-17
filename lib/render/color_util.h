@@ -7,6 +7,8 @@
 
 #include <cstdint>
 
+
+
 namespace color_util {
     typedef uint32_t Rgba;
 
@@ -27,8 +29,7 @@ namespace color_util {
     inline Rgba pack_rgba_i(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a) {
         if constexpr (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__) {
             return r | (g << 8) | (b << 16) | (a << 24);
-        }
-        else {
+        } else {
             return (r << 24) | (g << 16) | (b << 8) | a;
         }
     }
@@ -50,5 +51,7 @@ namespace color_util {
         return pack_rgba_d(rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 }
+
+
 
 #endif //COLOR_UTIL_H

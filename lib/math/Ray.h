@@ -9,15 +9,16 @@
 
 
 
+/**
+ * Represents a 3D ray, with a starting point and direction.
+ */
 class Ray {
 public:
     static const Ray X, Y, Z;
 
     Vec3 from, dir;
 
-    Ray(const Vec3&, const Vec3&);
-
-    Ray norm() const;
+    Ray(const Vec3 &from, const Vec3 &dir);
 };
 
 

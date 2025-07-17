@@ -4,35 +4,40 @@
 
 #ifndef VEC3_H
 #define VEC3_H
+
 #include <string>
 
 #include "Vec2.h"
 #include "../util/Axis.h"
 
 
+
+/**
+ * A 3D mathematical vector.
+ */
 class Vec3 {
 public:
     static const Vec3 ZERO, ONE, X, Y, Z, MIN, MAX;
 
     double x, y, z;
 
-    Vec3(const Vec3&);
-    Vec3(double, double, double);
-    Vec3(Vec2, double);
-    Vec3(double, Vec2);
-    Vec3(double);
+    Vec3(const Vec3 &v);
+    Vec3(double x, double y, double z);
+    Vec3(const Vec2 &xy, double z);
+    Vec3(double x, const Vec2 &yz);
+    Vec3(double xyz);
 
-    Vec3 operator+(const Vec3&) const;
-    Vec3 operator+(double) const;
+    Vec3 operator+(const Vec3 &v) const;
+    Vec3 operator+(double w) const;
     Vec3 operator-() const;
-    Vec3 operator-(const Vec3&) const;
-    Vec3 operator-(double) const;
-    Vec3 operator*(double) const;
-    Vec3 operator/(const Vec3&) const;
-    Vec3 operator/(double) const;
-    double operator*(const Vec3&) const;
+    Vec3 operator-(const Vec3 &v) const;
+    Vec3 operator-(double w) const;
+    Vec3 operator*(double d) const;
+    Vec3 operator/(const Vec3 &v) const;
+    Vec3 operator/(double d) const;
+    double operator*(const Vec3 &v) const;
 
-    double component(Axis axis) const;
+    double scalar_component(Axis axis) const;
 
     double sq() const;
     double magn() const;

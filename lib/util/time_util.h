@@ -9,7 +9,10 @@
 
 #include "string_util.h"
 
+
+
 namespace time_util {
+    using Micros = std::chrono::microseconds;
     using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
     using Duration = std::chrono::duration<long long, std::ratio<1, 1000000000>>;
 
@@ -25,9 +28,11 @@ namespace time_util {
 
     inline std::string format_stopwatch() {
         const auto duration = end_stopwatch();
-        const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+        const auto micros = std::chrono::duration_cast<Micros>(duration).count();
         return string_util::format_duration(micros);
     }
 }
+
+
 
 #endif //TIMER_UTIL_H

@@ -12,6 +12,8 @@
 
 #include "MeshObject.h"
 
+
+
 namespace mesh_util {
     inline void stream_ignore_line(std::istream &stream) {
         stream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -68,5 +70,7 @@ namespace mesh_util {
         return {std::make_unique<MeshObject>(std::move(tri_vertices), material)};
     }
 }
+
+
 
 #endif //MESH_UTIL_H

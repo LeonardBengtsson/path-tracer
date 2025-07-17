@@ -9,6 +9,8 @@
 #include "../lib/scene/scene_objects/SphereObject.h"
 #include "../lib/scene/scene_objects/mesh_util.h"
 
+
+
 static const auto white_material = Material(1, 0, false, 1, LightSpectrum::from_rgb(1, 1, 1, 1));
 static const auto red_material = Material(.9, -1, false, 1, LightSpectrum::from_rgb(1, 0, 0, 1));
 static const auto green_material = Material(.9, -1, false, 1, LightSpectrum::from_rgb(0, 1, 0, 1));
@@ -95,20 +97,16 @@ void scenes::init_glass_grid(Scene &scene, Matrix4x4 &projective_matrix) {
     constexpr int N = 5;
     for (int i = -N; i <= N; i++) {
         for (int j = -N; j <= N; j++) {
-            scene.add_object(std::make_unique<SphereObject>(Vec3((i + j) * .22, (i -j) * .22, 3), .15, &glass_material));
+            scene.add_object(std::make_unique<SphereObject>(Vec3((i + j) * .22, (i -j) * .22, 3), .15,
+                &glass_material));
         }
     }
     projective_matrix = Matrix4x4(Matrix3x3::IDENT, Vec3::ZERO);
 }
 
 void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
-    scene.add_object(std::make_unique<BoxObject>(
-        Aabb(
-            {-1000000, 20, -1000000},
-            {1000000, 1000000, 1000000}
-        ),
-        &white_material)
-    );
+    scene.add_object(std::make_unique<BoxObject>(Aabb({-1000000, 20, -1000000}, {1000000, 1000000, 1000000}),
+        &white_material));
     constexpr int M = 1;
     for (int i = -M; i <= M; i++) {
         for (int j = -M; j <= M; j++) {
@@ -119,7 +117,8 @@ void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
                 } else {
                     material = &metal_material;
                 }
-                scene.add_object(std::make_unique<BoxObject>(Aabb({i - .2, j - .2, k - .2}, {i + .2, j + .2, k + .2}), material));
+                scene.add_object(std::make_unique<BoxObject>(Aabb({i - .2, j - .2, k - .2}, {i + .2, j + .2, k + .2}),
+                    material));
             }
         }
     }
@@ -133,7 +132,8 @@ void scenes::init_box_grid(Scene &scene, Matrix4x4 &projective_matrix) {
 }
 
 void scenes::init_glass_boxes(Scene &scene, Matrix4x4 &projective_matrix) {
-    scene.add_object(std::make_unique<BoxObject>(Aabb({-1000000, 20, -1000000},{1000000, 1000000, 1000000}), &white_material));
+    scene.add_object(std::make_unique<BoxObject>(Aabb({-1000000, 20, -1000000},{1000000, 1000000, 1000000}),
+        &white_material));
     scene.add_object(std::make_unique<BoxObject>(Aabb({-9, -4, -4}, {-1, 4, 4}), &magenta_material));
     scene.add_object(std::make_unique<BoxObject>(Aabb({1, -4, -4}, {9, 4, 4}), &cyan_material));
     scene.add_object(std::make_unique<BoxObject>(Aabb({-3.5, -4.5, -8.5}, {-.5, -1.5, -5.5}), &translucent_material));

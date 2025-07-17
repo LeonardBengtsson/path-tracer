@@ -8,12 +8,13 @@
 #include "SceneObject.h"
 
 
+
 class SphereObject final : public SceneObject {
 public:
     const Vec3 center;
     const double radius;
 
-    SphereObject(const Vec3&, double, const Material*);
+    SphereObject(const Vec3 &center, double radius, const Material *material);
 
     bool ray_cast_from_outside(const Ray &ray, double &min_dist, Vec3 &pos, Vec3 &normal) const override;
 

@@ -6,9 +6,14 @@
 
 #include <cmath>
 
+
+
+const LightSpectrum LightSpectrum::BLACK = LightSpectrum();
+
 LightSpectrum::LightSpectrum() : red(0), green(0), blue(0) {}
 
-LightSpectrum::LightSpectrum(const double red, const double green, const double blue) : red(red), green(green), blue(blue) {}
+LightSpectrum::LightSpectrum(const double red, const double green, const double blue)
+  : red(red), green(green), blue(blue) {}
 
 LightSpectrum LightSpectrum::from_rgb(const double red, const double green, const double blue, const double intensity) {
     return {
@@ -52,10 +57,12 @@ double LightSpectrum::inv_gamma(const double v) {
     }
 }
 
-void LightSpectrum::add_modified(const LightSpectrum &source, const LightTransformation &modifier, const double factor) {
-    red += source.red * modifier.intensity_factor * factor;
-    green += source.green * modifier.intensity_factor * factor;
-    blue += source.blue * modifier.intensity_factor * factor;
+void LightSpectrum::add_modified(const LightSpectrum &source, const LightTransformation &transformation,
+    const double factor)
+{
+    red += source.red * transformation.intensity_factor * factor;
+    green += source.green * transformation.intensity_factor * factor;
+    blue += source.blue * transformation.intensity_factor * factor;
 }
 
 void LightSpectrum::scale(const double d) {
@@ -67,4 +74,3 @@ void LightSpectrum::scale(const double d) {
 LightSpectrum LightSpectrum::scaled(const double d) const {
     return {red * d, green * d, blue * d};
 }
-
